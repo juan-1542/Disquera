@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro - StarTune</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <!-- Google Fonts para tipografía -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #4b79db; /* Azul claro bonito */
+      color: #333;
+      font-family: 'Roboto', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .form-container {
+      background: rgba(255, 255, 255, 0.95); /* Fondo blanco con ligera transparencia */
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      width: 100%;
+    }
+
+    .logo {
+      display: block;
+      margin: 0 auto 1rem; /* Centrado */
+      max-height: 50px; /* Tamaño original del logo */
+    }
+
+    .btn-back-container {
+      text-align: left; /* Alinea el botón a la izquierda */
+      margin-bottom: 1rem;
+    }
+
+    .btn-back {
+      color: #1A3C6D;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s ease;
+    }
+
+    .btn-back:hover {
+      color: #D4AF37;
+      text-decoration: underline;
+    }
+
+    h1 {
+      color: #1A3C6D; /* Azul oscuro */
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+
+    .subtitle {
+      color: #555;
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .form-label {
+      color: #1A3C6D;
+      font-weight: 500;
+    }
+
+    .form-control, .form-select {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: #D4AF37; /* Amarillo-verde */
+      box-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
+      outline: none;
+    }
+
+    .btn-submit {
+      background-color: #1A3C6D; /* Azul oscuro */
+      border: none;
+      padding: 10px 30px;
+      font-weight: bold;
+      color: #ffffff;
+      border-radius: 25px;
+      transition: background-color 0.3s ease;
+      width: 100%;
+      text-transform: uppercase;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    .btn-submit:hover {
+      background-color: #D4AF37; /* Amarillo-verde */
+      color: #1A3C6D;
+    }
+
+    .terms-text {
+      color: #555;
+      font-size: 0.9rem;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .terms-text a {
+      color: #D4AF37;
+      text-decoration: none;
+    }
+
+    .terms-text a:hover {
+      text-decoration: underline;
+    }
+
+    .error-message {
+      color: #ff4444;
+      font-size: 0.9rem;
+      margin-top: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+<div class="form-container">
+  <div class="btn-back-container">
+    <a th:href="@{/}" class="btn-back">← Volver a la página principal</a>
+  </div>
+  <img src="/images/startune-logo.png" alt="Logotipo de StarTune" class="logo">
+  <h1>Únete a StarTune.</h1>
+  <p class="subtitle">Regístrate para gestionar tus artistas, contratos y regalías de forma fácil y rápida.</p>
+  <form th:action="@{/registro}" method="post" th:object="${elusuario}">
+    <div class="row">
+      <!-- Nombre -->
+      <div class="col-md-6 mb-3">
+        <label for="nombre" class="form-label">Nombre *</label>
+        <input type="text" id="nombre" name="nombre" class="form-control" required th:field="*{nombre}" placeholder="Ingresa tu nombre">
+        <div class="error-message" th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}"></div>
+      </div>
+      <!-- Cédula -->
+      <div class="col-md-6 mb-3">
+        <label for="cedula" class="form-label">Cédula *</label>
+        <input type="text" id="cedula" name="cedula" class="form-control" required th:field="*{cedula}" pattern="\d*" title="Solo se permiten números" placeholder="Ingresa tu cédula">
+        <div class="error-message" th:if="${#fields.hasErrors('cedula')}" th:errors="*{cedula}"></div>
+      </div>
+    </div>
+    <div class="row">
+      <!-- Teléfono -->
+      <div class="col-md-6 mb-3">
+        <label for="telefono" class="form-label">Número de celular *</label>
+        <input type="tel" id="telefono" name="telefono" class="form-control" required th:field="*{telefono}" pattern="\d*" title="Solo se permiten números" placeholder="Ingresa tu número de celular">
+        <div class="error-message" th:if="${#fields.hasErrors('telefono')}" th:errors="*{telefono}"></div>
+      </div>
+      <!-- Rol -->
+      <div class="col-md-6 mb-3">
+        <label for="rol" class="form-label">Rol *</label>
+        <select id="rol" name="rol" class="form-select" required th:field="*{rol}">
+          <option value="" disabled selected>Selecciona un rol</option>
+          <option value="ADMIN">Administrador</option>
+          <option value="ARTISTA">Artista</option>
+        </select>
+        <div class="error-message" th:if="${#fields.hasErrors('rol')}" th:errors="*{rol}"></div>
+      </div>
+    </div>
+    <div class="row">
+      <!-- Usuario -->
+      <div class="col-md-6 mb-3">
+        <label for="usuario" class="form-label">Usuario *</label>
+        <input type="text" id="usuario" name="usuario" class="form-control" required th:field="*{usuario}" placeholder="Ingresa tu usuario">
+        <div class="error-message" th:if="${#fields.hasErrors('usuario')}" th:errors="*{usuario}"></div>
+      </div>
+      <!-- Contraseña -->
+      <div class="col-md-6 mb-3">
+        <label for="contrasena" class="form-label">Contraseña *</label>
+        <input type="password" id="contrasena" name="contrasena" class="form-control" required th:field="*{contrasena}" placeholder="Ingresa tu contraseña">
+        <div class="error-message" th:if="${#fields.hasErrors('contrasena')}" th:errors="*{contrasena}"></div>
+      </div>
+    </div>
+    <div class="d-grid">
+      <button type="submit" class="btn btn-submit">Registrarse</button>
+    </div>
+    <p class="terms-text">Al registrarte, aceptas nuestros <a href="#">Términos y Condiciones</a>.</p>
+  </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
