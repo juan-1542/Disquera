@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -6,6 +7,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         body {
             background: #ffffff;
@@ -149,6 +152,221 @@
             max-height: 30px;
             margin: 0 15px;
         }
+
+        /* Sección de imagen grande */
+        .image-section {
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .image-section img {
+            max-width: 80%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        /* Sección del título */
+        .title-section {
+            background: #ffffff;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .title-section h2 {
+            font-family: 'Montserrat', sans-serif;
+            color: #1A3C6D;
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Sección de beneficios */
+        .benefits-section {
+            padding: 50px 0;
+            text-align: center;
+            background: #ffffff;
+        }
+
+        .benefits-section h2 {
+            font-family: 'Montserrat', sans-serif;
+            color: #1A3C6D;
+            font-weight: 700;
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .benefit-item {
+            margin-bottom: 2rem;
+        }
+
+        .benefit-item h3 {
+            font-family: 'Montserrat', sans-serif;
+            color: #1A3C6D;
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .benefit-item i.material-icons {
+            font-size: 2rem;
+            color: #D4AF37;
+            margin-bottom: 0.5rem;
+        }
+
+        .benefit-item p {
+            color: #555;
+            font-size: 1rem;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        /* Sección de éxito */
+        .success-section {
+            padding: 50px 0;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .success-content {
+            max-width: 1200px;
+            display: flex;
+            flex-wrap: wrap; /* Permite que el texto se ajuste si la imagen es pequeña */
+            gap: 30px;
+            align-items: center;
+        }
+
+        .success-image {
+            flex: 0 0 auto; /* Fija el ancho de la imagen */
+            max-width: 25%; /* Ajustado para que sea más cercano al prototipo */
+        }
+
+        .success-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .success-text {
+            flex: 1; /* Permite que el texto ocupe el espacio restante */
+        }
+
+        .success-text h2 {
+            font-family: 'Montserrat', sans-serif;
+            color: #1A3C6D; /* Azul */
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .success-text ul {
+            list-style: none;
+            padding: 0;
+            color: #333; /* Negro */
+            font-size: 1.1rem;
+        }
+
+        .success-text ul li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .success-text ul li::before {
+            content: "✔";
+            margin-right: 10px;
+        }
+
+        .success-text .btn-success {
+            background-color: #1976D2; /* Azul del botón */
+            border: none;
+            padding: 10px 30px;
+            font-weight: bold;
+            color: #ffffff;
+            border-radius: 25px;
+            transition: background-color 0.3s ease;
+            font-family: 'Roboto', sans-serif;
+            text-transform: uppercase;
+            margin-top: 1rem;
+        }
+
+        .success-text .btn-success:hover {
+            background-color: #1565C0; /* Azul más oscuro al hacer hover */
+        }
+
+        /* Nueva sección de características */
+        .features-section {
+            padding: 50px 0;
+            background: #ffffff;
+            text-align: center;
+        }
+
+        .features-section h2 {
+            font-family: 'Montserrat', sans-serif;
+            color: #1A3C6D; /* Azul */
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .features-section p.subtitle {
+            font-size: 1.1rem;
+            color: #333; /* Negro */
+            margin-bottom: 2rem;
+        }
+
+        .features-section .btn-admin {
+            background-color: #1A3C6D; /* Azul oscuro */
+            border: none;
+            padding: 10px 30px;
+            font-weight: bold;
+            color: #ffffff;
+            border-radius: 25px;
+            transition: background-color 0.3s ease;
+            font-family: 'Roboto', sans-serif;
+            text-transform: uppercase;
+            margin-bottom: 4rem; /* Más separación */
+        }
+
+        .features-section .btn-admin:hover {
+            background-color: #123456; /* Azul más oscuro al hacer hover */
+        }
+
+        .feature-item {
+            margin-bottom: 2rem;
+            background: #ffffff; /* Fondo blanco */
+            border: 1px solid #e0e0e0; /* Borde ligero */
+            border-radius: 8px; /* Bordes redondeados */
+            padding: 20px; /* Espacio interno */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra sutil para relieve */
+            transition: transform 0.2s ease; /* Animación al interactuar */
+            text-align: left; /* Alineación a la izquierda */
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px); /* Efecto de elevación al pasar el mouse */
+        }
+
+        .feature-item i.material-icons {
+            font-size: 2rem;
+            color: #1A3C6D; /* Azul para los íconos */
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-item h3 {
+            font-family: 'Montserrat', sans-serif;
+            color: #1A3C6D; /* Azul */
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-item p {
+            color: #333; /* Negro */
+            font-size: 1rem;
+            margin: 0; /* Ajustado para alineación a la izquierda */
+        }
     </style>
 </head>
 <body>
@@ -207,6 +425,159 @@
         </div>
     </div>
 </section>
+
+<!-- Sección de imagen grande -->
+<section class="image-section">
+    <div class="container">
+        <img src="/images/fondo1.png" alt="Imagen de DJ">
+    </div>
+</section>
+
+<!-- Sección del título -->
+<section class="title-section">
+    <div class="container">
+        <h2>La Plataforma Inteligente Para Artistas, Contratos y Regalías.</h2>
+    </div>
+</section>
+
+<!-- Sección de beneficios -->
+<section class="benefits-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 benefit-item">
+                <h3>Gestión Integral de Talento</h3>
+                <i class="material-icons">people</i> <!-- Ícono de personas -->
+                <p>Administra artistas, contratos, álbumes y regalías en un solo lugar. Divide del papeleo y centraliza toda tu operación musical.</p>
+            </div>
+            <div class="col-md-4 benefit-item">
+                <h3>Automatización de Regalías</h3>
+                <i class="material-icons">settings</i> <!-- Ícono de engranaje -->
+                <p>Cálculo y distribución de regalías de forma automática y precisa. Ahora tiempo, evita errores y mantiene transparencia.</p>
+            </div>
+            <div class="col-md-4 benefit-item">
+                <h3>Análisis y Reportes en Tiempo Real</h3>
+                <i class="material-icons">show_chart</i> <!-- Ícono de gráfico -->
+                <p>Visualiza el rendimiento de tus artistas y contratos con datos claros. Toma decisiones inteligentes basadas en métricas actualizadas.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Sección de éxito -->
+<section class="success-section">
+    <div class="container">
+        <div class="row success-content">
+            <div class="col-12 col-md-4 success-image">
+                <img src="/images/fondo2.png" alt="Imagen de éxito musical">
+            </div>
+            <div class="col-12 col-md-8 success-text">
+                <h2>Diseñado Para Impulsar Tu Éxito Musical.</h2>
+                <ul>
+                    <li>Plataforma centralizada para artistas, managers y disqueras.</li>
+                    <li>Automatiza contratos, regalías y lanzamientos.</li>
+                    <li>Control total con interfaz moderna y sin complicaciones.</li>
+                    <li>Pensado para hacer crecer tu carrera musical profesionalmente.</li>
+                </ul>
+                <a href="#" class="btn-success">Conoce StarTune</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Sección de características -->
+<section class="features-section">
+    <div class="container">
+        <h2>Características Clave</h2>
+        <p class="subtitle">Descubre cómo StarTune revoluciona la gestión musical</p>
+        <a th:href="@{/registro}" class="btn btn-admin">Regístrate como Administrador</a>
+
+        <div class="row gy-4">
+            <div class="col-md-4">
+                <div class="feature-item">
+                    <i class="material-icons">music_note</i>
+                    <h3>Catálogo de Artistas</h3>
+                    <p>Gestiona perfiles de artistas con fotos, biografías y estadísticas de rendimiento.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-item">
+                    <i class="material-icons">description</i>
+                    <h3>Control de Contratos</h3>
+                    <p>Administra contratos de manera clara y organizada, con fechas y condiciones visibles.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-item">
+                    <i class="material-icons">album</i>
+                    <h3>Gestión de Álbumes</h3>
+                    <p>Sube carátulas, administra lanzamientos y vincula cada álbum a artistas específicos.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row gy-4 mt-4">
+            <div class="col-md-4">
+                <div class="feature-item">
+                    <i class="material-icons">monetization_on</i>
+                    <h3>Distribución de Regalías</h3>
+                    <p>Calcula y reparte automáticamente regalías según contratos y reproducción.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-item">
+                    <i class="material-icons">analytics</i>
+                    <h3>Reportes Dinámicos</h3>
+                    <p>Accede a informes detallados sobre ingresos, contratos, popularidad y más.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-item">
+                    <i class="material-icons">cloud_upload</i>
+                    <h3>Acceso en la Nube</h3>
+                    <p>Trabaja desde cualquier lugar. Toda tu información segura en la nube.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Sección inspiradora -->
+<section class="inspiration-section">
+    <div class="container-fluid p-0">
+        <img src="/images/fondo3.png" alt="Artista en estudio" class="img-fluid w-100">
+    </div>
+    <div class="container text-center py-5">
+        <h2 style="color: #1A3C6D; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 2.5rem;">
+            Inspira. Crea. Administra.
+        </h2>
+        <p class="subtitle" style="font-size: 1.1rem; color: #333;">
+            StarTune te acompaña en cada paso, desde la inspiración hasta la gestión profesional de tu carrera musical.
+        </p>
+        <div class="row gx-4 mt-4">
+            <div class="col-md-4 mb-4 feature-item">
+                <i class="material-icons">dashboard_customize</i>
+                <h3>Panel de Control Único</h3>
+                <p>Monitorea toda tu operación musical desde un solo lugar con estadísticas clave y alertas inteligentes.</p>
+            </div>
+            <div class="col-md-4 mb-4 feature-item">
+                <i class="material-icons">cloud_upload</i>
+                <h3>Almacenamiento Seguro</h3>
+                <p>Guarda contratos, álbumes y documentos en la nube con acceso cifrado y disponibilidad 24/7.</p>
+            </div>
+            <div class="col-md-4 mb-4 feature-item">
+                <i class="material-icons">support_agent</i>
+                <h3> Control Total de Contratos</h3>
+                <p>Administra acuerdos, vencimientos y cláusulas desde un solo lugar seguro.</p>
+            </div>
+        </div>
+        <a href="/iniciosesion" class="btn btn-primary mt-5 px-4 py-2"
+           style="background-color: #1A3C6D; border: none; font-weight: bold; border-radius: 30px;">
+            Iniciar Sesión
+        </a>
+    </div>
+</section>
+
+
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
