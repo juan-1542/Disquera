@@ -1,11 +1,219 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Panel Artista</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artista de StarTune</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+          background-color: #f5f5ff;
+        }
+        .navbar {
+          width: 100%;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px 20px;
+          background-color: #fff;
+          border-bottom: 1px solid #e0e7ff;
+          box-sizing: border-box;
+        }
+        .navbar img {
+          height: 30px;
+        }
+        .navbar-links {
+          display: flex;
+          gap: 20px;
+        }
+        .navbar-links a {
+          text-decoration: none;
+          color: #1a3c6d;
+          font-size: 16px;
+        }
+        .navbar-right {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-right: 30px; /* Ajuste para alejarlo del borde */
+        }
+        .navbar-right button {
+          padding: 5px 15px;
+          border: 2px solid #1a3c6d;
+          border-radius: 20px;
+          background-color: transparent;
+          color: #1a3c6d;
+          font-size: 14px;
+          cursor: pointer;
+        }
+        .navbar-right .material-icons {
+          font-size: 28px;
+          color: #1a3c6d;
+          cursor: pointer;
+        }
+        .container {
+          max-width: 1200px;
+          margin: 20px auto;
+          padding: 20px;
+          border-radius: 10px;
+          background-color: #fff;
+        }
+        .volver {
+          font-size: 14px;
+          color: #007bff;
+          text-decoration: none;
+          display: block;
+          margin-bottom: 20px;
+        }
+        h1 {
+          font-size: 36px;
+          color: #1a3c6d;
+          margin-bottom: 40px;
+        }
+        .cards {
+          display: flex;
+          gap: 20px;
+          justify-content: space-between;
+        }
+        .card {
+          flex: 1;
+          background-color: #f8faff;
+          border: 1px solid #e0e7ff;
+          border-radius: 10px;
+          padding: 20px;
+          text-align: center;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .card .material-icons {
+          font-size: 40px;
+          color: #1a3c6d;
+          margin-bottom: 10px;
+        }
+        .card h2 {
+          font-size: 18px;
+          color: #1a3c6d;
+          margin: 0 0 10px;
+        }
+        .card p {
+          font-size: 14px;
+          color: #666;
+          margin: 0 0 20px;
+        }
+        .card button {
+          padding: 10px 20px;
+          border: 2px solid #1a3c6d;
+          border-radius: 20px;
+          background-color: transparent;
+          color: #1a3c6d;
+          font-size: 14px;
+          cursor: pointer;
+          transition: background-color 0.3s;
+        }
+        .card button:hover {
+          background-color: #1a3c6d;
+          color: #fff;
+        }
+
+        /* Sidebar */
+        .sidebar {
+          height: 100%;
+          width: 0;
+          position: fixed;
+          top: 0;
+          right: 0;
+          background-color: #fff;
+          overflow-x: hidden;
+          transition: 0.5s;
+          padding-top: 60px;
+          box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+          z-index: 1000;
+        }
+        .sidebar-content {
+          padding: 20px;
+        }
+        .sidebar h2 {
+          color: #1a3c6d;
+        }
+        .sidebar p {
+          margin: 10px 0;
+          color: #555;
+        }
+        .closebtn {
+          position: absolute;
+          top: 20px;
+          right: 25px;
+          font-size: 36px;
+          cursor: pointer;
+          color: #1a3c6d;
+        }
+    </style>
 </head>
+
 <body>
-<h1>Bienvenido Artista</h1>
-<p>Aquí podrás ver tus álbumes, contratos y regalías.</p>
+
+<nav class="navbar">
+    <img src="images/startune-logo.png" alt="StarTune Logo">
+    <div class="navbar-links">
+        <a href="#">Artistas</a>
+        <a href="#">Lanzamientos</a>
+        <a href="#">Contratos</a>
+        <a href="#">Regalías</a>
+    </div>
+    <div class="navbar-right">
+        <button>Cerrar Sesión</button>
+        <span class="material-icons" onclick="openSidebar()">person</span>
+    </div>
+</nav>
+
+<div class="container">
+    <a href="#" class="volver">Volver</a>
+    <h1>¡Bienvenido, Artista de StarTune!</h1>
+    <div class="cards">
+        <div class="card">
+            <span class="material-icons">description</span>
+            <h2>Gestión De Contrato</h2>
+            <p>Generar contrato, solicitar revisión</p>
+            <button>Ir</button>
+        </div>
+        <div class="card">
+            <span class="material-icons">album</span>
+            <h2>Gestión de Álbumes y canciones</h2>
+            <p>Agregar canciones, álbumes y solicitar lanzamiento</p>
+            <button>Ir</button>
+        </div>
+        <div class="card">
+            <span class="material-icons">monetization_on</span>
+            <h2>Regalías</h2>
+            <p>Consulta las regalías que tiene el artista</p>
+            <button>Ir</button>
+        </div>
+    </div>
+</div>
+
+<!-- Sidebar oculto -->
+<div id="mySidebar" class="sidebar">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()">&times;</a>
+    <div class="sidebar-content">
+        <h2>Datos del Artista</h2>
+        <p><strong>Nombre:</strong> Juan Pérez</p>
+        <p><strong>Correo:</strong> juanperez@example.com</p>
+        <p><strong>Género:</strong> Pop</p>
+        <p><strong>Último Álbum:</strong> "Estrellas Fugaces"</p>
+    </div>
+</div>
+
+<script>
+    function openSidebar() {
+      document.getElementById("mySidebar").style.width = "300px";
+    }
+
+    function closeSidebar() {
+      document.getElementById("mySidebar").style.width = "0";
+    }
+</script>
+
 </body>
 </html>
