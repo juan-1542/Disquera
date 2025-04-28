@@ -7,153 +7,194 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         body {
-          font-family: Arial, sans-serif;
-          margin: 0;
-          padding: 0;
-          background-color: #f5f5ff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5ff;
         }
+        /* Navbar */
         .navbar {
-          width: 100%;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 10px 20px;
-          background-color: #fff;
-          border-bottom: 1px solid #e0e7ff;
-          box-sizing: border-box;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 30px;
+            background-color: #fff;
+            border-bottom: 1px solid #e0e7ff;
+            position: relative;
+            height: 70px;
         }
         .navbar img {
-          height: 30px;
+            height: 40px;
         }
         .navbar-links {
-          display: flex;
-          gap: 20px;
+            display: flex;
+            gap: 20px;
         }
         .navbar-links a {
-          text-decoration: none;
-          color: #1a3c6d;
-          font-size: 16px;
+            text-decoration: none;
+            color: #1a3c6d;
+            font-size: 16px;
         }
         .navbar-right {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          margin-right: 30px; /* Ajuste para alejarlo del borde */
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         .navbar-right button {
-          padding: 5px 15px;
-          border: 2px solid #1a3c6d;
-          border-radius: 20px;
-          background-color: transparent;
-          color: #1a3c6d;
-          font-size: 14px;
-          cursor: pointer;
+            padding: 5px 15px;
+            border: 2px solid #1a3c6d;
+            border-radius: 20px;
+            background-color: transparent;
+            color: #1a3c6d;
+            font-size: 14px;
+            cursor: pointer;
         }
         .navbar-right .material-icons {
-          font-size: 28px;
-          color: #1a3c6d;
-          cursor: pointer;
+            font-size: 28px;
+            color: #1a3c6d;
+            cursor: pointer;
         }
-        .container {
-          max-width: 1200px;
-          margin: 20px auto;
-          padding: 20px;
-          border-radius: 10px;
-          background-color: #fff;
-        }
-        .volver {
-          font-size: 14px;
-          color: #007bff;
-          text-decoration: none;
-          display: block;
-          margin-bottom: 20px;
-        }
-        h1 {
-          font-size: 36px;
-          color: #1a3c6d;
-          margin-bottom: 40px;
-        }
-        .cards {
-          display: flex;
-          gap: 20px;
-          justify-content: space-between;
-        }
-        .card {
-          flex: 1;
-          background-color: #f8faff;
-          border: 1px solid #e0e7ff;
-          border-radius: 10px;
-          padding: 20px;
-          text-align: center;
-          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .card .material-icons {
-          font-size: 40px;
-          color: #1a3c6d;
-          margin-bottom: 10px;
-        }
-        .card h2 {
-          font-size: 18px;
-          color: #1a3c6d;
-          margin: 0 0 10px;
-        }
-        .card p {
-          font-size: 14px;
-          color: #666;
-          margin: 0 0 20px;
-        }
-        .card button {
-          padding: 10px 20px;
-          border: 2px solid #1a3c6d;
-          border-radius: 20px;
-          background-color: transparent;
-          color: #1a3c6d;
-          font-size: 14px;
-          cursor: pointer;
-          transition: background-color 0.3s;
-        }
-        .card button:hover {
-          background-color: #1a3c6d;
-          color: #fff;
-        }
-
         /* Sidebar */
         .sidebar {
-          height: 100%;
-          width: 0;
-          position: fixed;
-          top: 0;
-          right: 0;
-          background-color: #fff;
-          overflow-x: hidden;
-          transition: 0.5s;
-          padding-top: 60px;
-          box-shadow: -2px 0 5px rgba(0,0,0,0.2);
-          z-index: 1000;
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 250px;
+            height: 100%;
+            background-color: #fff;
+            box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+            transition: right 0.3s;
+            padding: 20px;
+            z-index: 1000;
         }
-        .sidebar-content {
-          padding: 20px;
+        .sidebar.active {
+            right: 0;
         }
-        .sidebar h2 {
-          color: #1a3c6d;
+        .sidebar h3 {
+            margin-top: 0;
+            color: #1a3c6d;
         }
         .sidebar p {
-          margin: 10px 0;
-          color: #555;
+            color: #333;
+            font-size: 14px;
+            margin-bottom: 10px;
         }
-        .closebtn {
-          position: absolute;
-          top: 20px;
-          right: 25px;
-          font-size: 36px;
-          cursor: pointer;
-          color: #1a3c6d;
+        /* Contenedor Principal */
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #fff;
+        }
+        .volver {
+            font-size: 14px;
+            color: #007bff;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 36px;
+            color: #1a3c6d;
+            margin-bottom: 40px;
+        }
+        .cards {
+            display: flex;
+            gap: 20px;
+            justify-content: space-between;
+        }
+        .card {
+            flex: 1;
+            background-color: #f8faff;
+            border: 1px solid #e0e7ff;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .card .material-icons {
+            font-size: 40px;
+            color: #1a3c6d;
+            margin-bottom: 10px;
+        }
+        .card h2 {
+            font-size: 18px;
+            color: #1a3c6d;
+            margin: 0 0 10px;
+        }
+        .card p {
+            font-size: 14px;
+            color: #666;
+            margin: 0 0 20px;
+        }
+        .card button {
+            padding: 10px 20px;
+            border: 2px solid #1a3c6d;
+            border-radius: 20px;
+            background-color: transparent;
+            color: #1a3c6d;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .card button:hover {
+            background-color: #1a3c6d;
+            color: #fff;
+        }
+        /* Sección de pendientes */
+        .seccion-pendientes {
+            margin-top: 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+        .pendiente-card {
+            display: flex;
+            align-items: center;
+            background-color: #ffffff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .pendiente-img {
+            width: 250px;
+            height: auto;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+        .pendiente-info {
+            margin-left: 40px;
+        }
+        .pendiente-info h2 {
+            font-size: 28px;
+            color: #1a3c6d;
+            margin-bottom: 10px;
+        }
+        .pendiente-info p {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .pendiente-info button {
+            background-color: #1a3c6d;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: background-color 0.3s;
+        }
+        .pendiente-info button:hover {
+            background-color: #0f2a4d;
         }
     </style>
 </head>
-
 <body>
 
+<!-- Navbar -->
 <nav class="navbar">
     <img src="images/startune-logo.png" alt="StarTune Logo">
     <div class="navbar-links">
@@ -164,13 +205,23 @@
     </div>
     <div class="navbar-right">
         <button>Cerrar Sesión</button>
-        <span class="material-icons" onclick="openSidebar()">person</span>
+        <span class="material-icons" onclick="toggleSidebar()">person</span>
     </div>
 </nav>
 
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <h3>Datos del Artista</h3>
+    <p><strong>Nombre:</strong> Juan Pérez</p>
+    <p><strong>Correo:</strong> juanperez@email.com</p>
+    <p><strong>Rol:</strong> Artista</p>
+</div>
+
+<!-- Contenido -->
 <div class="container">
     <a href="#" class="volver">Volver</a>
     <h1>¡Bienvenido, Artista de StarTune!</h1>
+
     <div class="cards">
         <div class="card">
             <span class="material-icons">description</span>
@@ -191,27 +242,33 @@
             <button>Ir</button>
         </div>
     </div>
-</div>
 
-<!-- Sidebar oculto -->
-<div id="mySidebar" class="sidebar">
-    <a href="javascript:void(0)" class="closebtn" onclick="closeSidebar()">&times;</a>
-    <div class="sidebar-content">
-        <h2>Datos del Artista</h2>
-        <p><strong>Nombre:</strong> Juan Pérez</p>
-        <p><strong>Correo:</strong> juanperez@example.com</p>
-        <p><strong>Género:</strong> Pop</p>
-        <p><strong>Último Álbum:</strong> "Estrellas Fugaces"</p>
+    <!-- Sección Pendientes -->
+    <div class="seccion-pendientes">
+        <div class="pendiente-card">
+            <img src="images/lanzamiento.jpg" alt="Lanzamientos" class="pendiente-img">
+            <div class="pendiente-info">
+                <h2>Lanzamientos Por Aprobar</h2>
+                <p>Los Artistas Esperan Que revises sus lanzamientos pronto</p>
+                <button>Aprueba Lanzamientos</button>
+            </div>
+        </div>
+
+        <div class="pendiente-card">
+            <img src="images/contratos.jpg" alt="Contratos" class="pendiente-img">
+            <div class="pendiente-info">
+                <h2>Contratos por revisar</h2>
+                <p>Revisa Las Disputas Pendientes</p>
+                <button>Contratos Pendientes</button>
+            </div>
+        </div>
     </div>
 </div>
 
+<!-- Script para Sidebar -->
 <script>
-    function openSidebar() {
-      document.getElementById("mySidebar").style.width = "300px";
-    }
-
-    function closeSidebar() {
-      document.getElementById("mySidebar").style.width = "0";
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
     }
 </script>
 
