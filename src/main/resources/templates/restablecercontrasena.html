@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form th:action="@{/restablecercontrasena}" method="post">
+  <label for="contrasena">Nueva contraseña:</label>
+  <input type="password" id="contrasena" name="contrasena" required placeholder="Ingresa tu nueva contraseña">
+  <button type="submit">Restablecer contraseña</button>
+</form>
+
+</body>
+</html>

@@ -4,6 +4,7 @@ import co.edu.ucentral.disquera.Persistencia.Entidades.Usuario;
 import co.edu.ucentral.disquera.Persistencia.Repositorio.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,4 +53,20 @@ public class UsuarioServicio {
         }
         return null;
     }
+    public Usuario buscarPorCorreo(String correo) {
+        return usuarioRepositorio.findByCorreo(correo).orElse(null);
+    }
+
+    public void actualizarUsuario(Usuario usuarioActualizado) {
+        // Aquí se actualiza el usuario en la base de datos
+        usuarioRepositorio.save(usuarioActualizado);
+    }
+    public Usuario buscarPorCodigo(String codigo) {
+        return usuarioRepositorio.findByCodigoRecuperacion(codigo).orElse(null);
+    }
+    public PasswordEncoder getPasswordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+
 }

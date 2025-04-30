@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form th:action="@{/verificarcodigo}" method="post">
+  <label for="codigo">Código de recuperación:</label>
+  <input type="text" id="codigo" name="codigo" required placeholder="Ingresa el código recibido">
+  <button type="submit">Verificar código</button>
+</form>
+
+</body>
+</html>
