@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmación de Contrato</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4ff; padding: 40px; }
+        .container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px #ccc; }
+        h2 { text-align: center; color: #1a3c6d; }
+        p { text-align: center; color: #333; font-size: 1.2em; }
+        a { display: block; text-align: center; margin-top: 20px; background-color: #1a3c6d; color: white; padding: 10px; border-radius: 5px; text-decoration: none; }
+        a:hover { background-color: #0f2a4d; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2 th:text="${mensaje}">Mensaje de confirmación</h2>
+    <a th:href="@{/artista}">Volver al Panel</a>
+</div>
+</body>
+</html>

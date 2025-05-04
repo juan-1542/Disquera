@@ -6,9 +6,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
         body {
-            background-color: #e8eaf6;
+            background-color: #f5f5fc;
             font-family: 'Roboto', sans-serif;
-            min-height: 100vh;
         }
 
         .navbar {
@@ -34,8 +33,8 @@
         }
 
         .welcome-message {
-            margin-top: 40px;
-            margin-bottom: 40px;
+            background-color: #e8eaf6;
+            padding: 50px 0;
             text-align: center;
             font-size: 2.5rem;
             font-weight: bold;
@@ -47,6 +46,8 @@
             justify-content: center;
             gap: 30px;
             flex-wrap: wrap;
+            margin-top: 30px;
+            margin-bottom: 50px;
         }
 
         .custom-card {
@@ -72,6 +73,36 @@
             color: #6c757d;
             margin: 15px 0;
         }
+
+        .section-bottom {
+            background-color: white;
+            padding: 50px;
+        }
+
+        .bottom-card {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .bottom-card img {
+            width: 130px;
+            height: 130px;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .bottom-card h4 {
+            color: #1A3C6D;
+            font-weight: bold;
+        }
+
+        .bottom-card p {
+            color: #6c757d;
+            margin: 5px 0 10px;
+        }
     </style>
 </head>
 <body>
@@ -93,31 +124,54 @@
     </div>
 </nav>
 
-<div class="container">
-    <div class="welcome-message">
-        ¡Bienvenido, Admin de StarTune!
-    </div>
+<div class="welcome-message">
+    ¡Bienvenido, Administrador de StarTune!
+</div>
 
+<div class="container">
     <div class="card-container">
         <div class="custom-card">
             <h5>Gestión De Contrato</h5>
-            <p>Generar contrato, solicitar revisión</p>
+            <p>Revisa el contrato del artista</p>
             <a th:href="@{/admin/contratos}" class="btn btn-outline-primary">Ir</a>
         </div>
 
         <div class="custom-card">
-            <h5>Gestión de Álbumes y canciones</h5>
-            <p>Agregar canciones, álbumes y solicitar lanzamiento</p>
+            <h5>Gestión de lanzamientos</h5>
+            <p>Gestiona el lanzamiento del álbum del artista</p>
             <a th:href="@{/admin/albumes}" class="btn btn-outline-primary">Ir</a>
         </div>
 
         <div class="custom-card">
             <h5>Regalías</h5>
-            <p>Consulta las regalías que tiene el artista</p>
+            <p>Agregar las regalías del artista</p>
             <a th:href="@{/admin/regalias}" class="btn btn-outline-primary">Ir</a>
+        </div>
+    </div>
+</div>
+
+<div class="section-bottom">
+    <div class="container">
+        <div class="bottom-card">
+            <img th:src="@{/images/lanzamiento.jpg}" alt="Lanzamientos">
+            <div>
+                <h4>Lanzamientos Por Aprobar</h4>
+                <p>Los Artistas Esperan Que revises sus lanzamientos pronto</p>
+                <a th:href="@{/admin/lanzamientos}" class="btn btn-outline-primary">Aprobar Lanzamientos</a>
+            </div>
+        </div>
+
+        <div class="bottom-card">
+            <img th:src="@{/images/contratos.jpg}" alt="Contratos">
+            <div>
+                <h4>Contratos por revisar</h4>
+                <p>Revisa Las Disputas Pendientes</p>
+                <a th:href="@{/admin/contratos}" class="btn btn-outline-primary">Contratos Pendientes</a>
+            </div>
         </div>
     </div>
 </div>
 
 </body>
 </html>
+

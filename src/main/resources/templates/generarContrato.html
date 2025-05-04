@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Generar Contrato</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4ff; padding: 40px; }
+        .form-container { max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px #ccc; }
+        h2 { text-align: center; color: #1a3c6d; }
+        label { display: block; margin-top: 15px; color: #333; }
+        input, select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #ccc; }
+        button { margin-top: 20px; width: 100%; background-color: #1a3c6d; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #0f2a4d; }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <h2>Generar Contrato</h2>
+    <form th:action="@{/contratos/guardar}" method="post">
+        <label for="nombreReal">Nombre real:</label>
+        <input type="text" id="nombreReal" name="nombreReal" required>
+
+        <label for="nombreArtistico">Nombre artístico:</label>
+        <input type="text" id="nombreArtistico" name="nombreArtistico" required>
+
+        <label for="telefono">Teléfono:</label>
+        <input type="text" id="telefono" name="telefono" required>
+
+        <label for="duracionMeses">Duración del contrato (meses):</label>
+        <input type="number" id="duracionMeses" name="duracionMeses" required min="1">
+
+        <label for="generoMusical">Género musical:</label>
+        <select id="generoMusical" name="generoMusical" required>
+            <option value="">Selecciona uno</option>
+            <option value="Pop">Pop</option>
+            <option value="Rock">Rock</option>
+            <option value="Urbano">Urbano</option>
+            <option value="Reguetón">Reguetón</option>
+            <option value="Clásico">Clásico</option>
+        </select>
+
+        <label for="porcentajeGanancia">Porcentaje de ganancia (%):</label>
+        <input type="number" id="porcentajeGanancia" name="porcentajeGanancia" step="0.01" min="0" max="100" required>
+
+        <button type="submit">Generar Contrato</button>
+    </form>
+</div>
+</body>
+</html>
+
