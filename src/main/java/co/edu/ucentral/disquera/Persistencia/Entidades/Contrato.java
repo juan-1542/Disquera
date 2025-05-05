@@ -122,7 +122,6 @@ public class Contrato {
         this.artista = artista;
     }
 
-    // Método para calcular el estado dinámicamente
     public String calcularEstado() {
         LocalDate hoy = LocalDate.now();
         if ("Rechazado".equals(estado) || "Pendiente".equals(estado)) {
@@ -139,4 +138,4 @@ public class Contrato {
             return "Activo";
         }
     }
-}
+    }
