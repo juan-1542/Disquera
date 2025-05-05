@@ -61,7 +61,12 @@
 <div class="header">
     <h2>Gestión de Contratos</h2>
     <p>Permite realizar el contrato del artista y poder gestionarlo</p>
-    <small class="text-muted">Cantidad de contratos: "Activos", "Pendiente", "Vencidos"</small>
+    <small class="text-muted">
+        Cantidad de contratos:
+        <span th:text="${activos} + ' Activos'"></span>,
+        <span th:text="${pendientes} + ' Pendientes'"></span>,
+        <span th:text="${vencidos} + ' Vencidos'"></span>
+    </small>
 </div>
 
 <div class="tabla-contratos container">
@@ -76,7 +81,16 @@
         </tr>
         </thead>
         <tbody>
-        <!-- Contratos se listarán aquí en el futuro -->
+        <tr th:each="contrato : ${contratos}">
+            <td th:text="${contrato.id}">Contrato ID</td>
+            <td th:text="${#temporals.format(contrato.fechaInicio, 'dd/MM/yyyy')}">Inicio</td>
+            <td th:text="${#temporals.format(contrato.fechaVencimiento, 'dd/MM/yyyy')}">Vencimiento</td>
+            <td th:text="${contrato.estado}">Estado</td>
+            <td>
+                <a th:href="@{'/contratos/editar/' + ${contrato.id}}" class="btn btn-sm btn-primary">Editar</a>
+                <a th:href="@{'/contratos/eliminar/' + ${contrato.id}}" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de eliminar este contrato?')">Eliminar</a>
+            </td>
+        </tr>
         </tbody>
     </table>
 </div>

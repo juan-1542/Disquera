@@ -17,13 +17,15 @@ public class Contrato {
     private String generoMusical;
     private Double porcentajeGanancia;
     private LocalDate fechaCreacion;
+    private LocalDate fechaInicio;
+    private LocalDate fechaVencimiento;
+    private String estado; // Valores posibles: "Pendiente", "Activo", "Rechazado", "Vencido"
 
     @ManyToOne
     @JoinColumn(name = "artista_id")
     private Usuario artista;
 
     // Getters y setters
-
     public Long getId() {
         return id;
     }
@@ -88,11 +90,53 @@ public class Contrato {
         this.fechaCreacion = fechaCreacion;
     }
 
+    public LocalDate getFechaInicio() {
+        return fechaInicio;
+    }
+
+    public void setFechaInicio(LocalDate fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
+    public LocalDate getFechaVencimiento() {
+        return fechaVencimiento;
+    }
+
+    public void setFechaVencimiento(LocalDate fechaVencimiento) {
+        this.fechaVencimiento = fechaVencimiento;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
     public Usuario getArtista() {
         return artista;
     }
 
     public void setArtista(Usuario artista) {
         this.artista = artista;
+    }
+
+    // Método para calcular el estado dinámicamente
+    public String calcularEstado() {
+        LocalDate hoy = LocalDate.now();
+        if ("Rechazado".equals(estado) || "Pendiente".equals(estado)) {
+            return estado;
+        }
+        if (fechaInicio == null || fechaVencimiento == null) {
+            return "Pendiente";
+        }
+        if (hoy.isBefore(fechaInicio)) {
+            return "Pendiente";
+        } else if (hoy.isAfter(fechaVencimiento)) {
+            return "Vencido";
+        } else {
+            return "Activo";
+        }
     }
 }

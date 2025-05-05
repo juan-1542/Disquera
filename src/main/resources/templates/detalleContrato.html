@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalle del Contrato - StarTune</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #eaf0ff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            margin: 40px auto;
+            max-width: 850px;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .header img {
+            height: 60px;
+        }
+        .header h2 {
+            color: #004b9f;
+            font-weight: bold;
+        }
+        p span {
+            font-weight: 500;
+            color: #333;
+        }
+        .btn {
+            min-width: 120px;
+        }
+        .btn-success {
+            background-color: #0075ff;
+            border-color: #0075ff;
+        }
+        .btn-danger {
+            background-color: #ff4d4f;
+            border-color: #ff4d4f;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <img th:src="@{/startune-logo.png}" alt="Logo StarTune">
+        <h2>Detalle del Contrato</h2>
+    </div>
+
+    <p><strong>ID:</strong> <span th:text="${contrato.id}"></span></p>
+    <p><strong>Nombre Real:</strong> <span th:text="${contrato.nombreReal}"></span></p>
+    <p><strong>Nombre Artístico:</strong> <span th:text="${contrato.nombreArtistico}"></span></p>
+    <p><strong>Teléfono:</strong> <span th:text="${contrato.telefono}"></span></p>
+    <p><strong>Duración (meses):</strong> <span th:text="${contrato.duracionMeses}"></span></p>
+    <p><strong>Género Musical:</strong> <span th:text="${contrato.generoMusical}"></span></p>
+    <p><strong>Porcentaje Ganancia:</strong> <span th:text="${contrato.porcentajeGanancia + '%'}"></span></p>
+    <p><strong>Fecha Creación:</strong> <span th:text="${#temporals.format(contrato.fechaCreacion, 'dd/MM/yyyy')}"></span></p>
+    <p><strong>Fecha Inicio:</strong>
+        <span th:if="${contrato.fechaInicio != null}" th:text="${#temporals.format(contrato.fechaInicio, 'dd/MM/yyyy')}"></span>
+    </p>
+    <p><strong>Fecha Vencimiento:</strong>
+        <span th:if="${contrato.fechaVencimiento != null}" th:text="${#temporals.format(contrato.fechaVencimiento, 'dd/MM/yyyy')}"></span>
+    </p>
+
+    <div class="mt-4 d-flex justify-content-between">
+        <a th:href="@{'/contratos/admin/aceptar/' + ${contrato.id}}" class="btn btn-success">Aceptar</a>
+        <a th:href="@{'/contratos/admin/rechazar/' + ${contrato.id}}" class="btn btn-danger">Rechazar</a>
+        <a th:href="@{/contratos/admin/contratos}" class="btn btn-secondary">Volver</a>
+    </div>
+</div>
+</body>
+</html>
