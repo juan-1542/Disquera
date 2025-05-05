@@ -113,11 +113,12 @@
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link" href="#">Artistas</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Lanzamientos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Contratos</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Regalías</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/admin/lanzamiento}">Lanzamientos</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/admin/contratos}">Contratos</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/admin/regalias}">Regalías</a></li>
                 <li class="nav-item ms-3">
-                    <a class="btn btn-outline-primary" href="#">Cerrar Sesión</a>
+                    <a class="btn btn-outline-primary" th:href="@{/iniciosesion}">Cerrar Sesión</a>
+
                 </li>
             </ul>
         </div>
@@ -139,7 +140,7 @@
         <div class="custom-card">
             <h5>Gestión de lanzamientos</h5>
             <p>Gestiona el lanzamiento del álbum del artista</p>
-            <a th:href="@{/admin/albumes}" class="btn btn-outline-primary">Ir</a>
+            <a th:href="@{/admin/lanzamiento}" class="btn btn-outline-primary">Ir</a>
         </div>
 
         <div class="custom-card">

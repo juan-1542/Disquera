@@ -198,13 +198,15 @@
 <nav class="navbar">
     <img src="images/startune-logo.png" alt="StarTune Logo">
     <div class="navbar-links">
-        <a href="#">Artistas</a>
-        <a href="#">Lanzamientos</a>
-        <a href="#">Contratos</a>
-        <a href="#">Regalías</a>
+        <a href="/artista/lanzamiento">Lanzamientos</a>
+        <a href="/contratos/gestionar">Contratos</a>
+        <a href="/artista/regalias">Regalias</a>
+        <a href="/artista/albumes">Albumes</a>
+
     </div>
     <div class="navbar-right">
-        <button>Cerrar Sesión</button>
+        <button onclick="location.href='/iniciosesion'">Cerrar Sesión</button>
+
         <span class="material-icons" onclick="toggleSidebar()">person</span>
     </div>
 </nav>
@@ -219,7 +221,6 @@
 
 <!-- Contenido -->
 <div class="container">
-    <a href="#" class="volver">Volver</a>
     <h1>¡Bienvenido, Artista de StarTune!</h1>
 
     <div class="cards">
@@ -235,13 +236,13 @@
             <span class="material-icons">album</span>
             <h2>Gestión de Álbumes y canciones</h2>
             <p>Agregar canciones, álbumes y solicitar lanzamiento</p>
-            <button>Ir</button>
+            <button onclick="location.href='/artista/albumes'">Ir</button>
         </div>
         <div class="card">
             <span class="material-icons">monetization_on</span>
             <h2>Regalías</h2>
             <p>Consulta las regalías que tiene el artista</p>
-            <button>Ir</button>
+            <button onclick="location.href='/artista/regalias'">Ir</button>
         </div>
     </div>
 
@@ -250,9 +251,10 @@
         <div class="pendiente-card">
             <img src="images/lanzamiento.jpg" alt="Lanzamientos" class="pendiente-img">
             <div class="pendiente-info">
-                <h2>Lanzamientos Por Aprobar</h2>
-                <p>Los Artistas Esperan Que revises sus lanzamientos pronto</p>
-                <button>Aprueba Lanzamientos</button>
+                <h2>Ver lanzamientos</h2>
+                <p>Ver si el administrador aprobo mis lanzamientos</p>
+                <button onclick="location.href='/artista/lanzamiento'">Consulta Lanzamientos</button>
+
             </div>
         </div>
 
