@@ -32,7 +32,7 @@ public class UsuarioControlador {
     @PostMapping("/registro")
     public String procesarRegistro(@ModelAttribute("elusuario") Usuario usuario, Model model) {
         try {
-            usuario.setRol(Usuario.Rol.ARTISTA); // Asignar rol por defecto
+
             usuarioServicio.registrarUsuario(usuario);
             return "redirect:/iniciosesion"; // Redirige correctamente a la página de inicio de sesión
         } catch (Exception e) {
