@@ -1,57 +1,57 @@
 package co.edu.ucentral.disquera.Controladores;
 
 import co.edu.ucentral.disquera.Persistencia.Entidades.Album;
-import co.edu.ucentral.disquera.Persistencia.Entidades.Artista;
+
 import co.edu.ucentral.disquera.Servicios.AlbumServicio;
 import co.edu.ucentral.disquera.Servicios.ArtistaServicio;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+
 
 @Controller
-@RequestMapping("/admin/albumes")
+@RequestMapping("/albumes")
 public class AlbumControlador {
 
-    @Autowired
-    private AlbumServicio albumServicio;
+    private final AlbumServicio albumServicio;
+    private final ArtistaServicio artistaServicio;
 
-    @Autowired
-    private ArtistaServicio artistaServicio;
+    public AlbumControlador(AlbumServicio albumServicio, ArtistaServicio artistaServicio) {
+        this.albumServicio = albumServicio;
+        this.artistaServicio = artistaServicio;
+    }
 
     @GetMapping
-    public String listarAlbumes(Model model) {
-        model.addAttribute("listaAlbumes", albumServicio.listarTodos());
-        return "lista_albumes";
+    public String listar(Model model) {
+        model.addAttribute("albumes", albumServicio.listarTodos());
+        return "/albumes"; // Tu vista de lista de álbumes
     }
 
     @GetMapping("/nuevo")
-    public String mostrarFormulario(Model model) {
+    public String formularioNuevo(Model model) {
         model.addAttribute("album", new Album());
-        List<Artista> artistas = artistaServicio.listarTodos();
-        model.addAttribute("listaArtistas", artistas);
-        return "formulario_album";
+        model.addAttribute("artistas", artistaServicio.listarTodos());
+        return "/formulario_album";
     }
 
     @PostMapping("/guardar")
-    public String guardarAlbum(@ModelAttribute("album") Album album) {
+    public String guardar(@ModelAttribute Album album) {
         albumServicio.guardar(album);
-        return "redirect:/admin/albumes";
+        return "redirect:/albumes";
     }
 
     @GetMapping("/editar/{id}")
-    public String mostrarFormularioEdicion(@PathVariable Long id, Model model) {
+    public String editar(@PathVariable Long id, Model model) {
         Album album = albumServicio.buscarPorId(id);
         model.addAttribute("album", album);
-        model.addAttribute("listaArtistas", artistaServicio.listarTodos());
-        return "formulario_album";
+        model.addAttribute("artistas", artistaServicio.listarTodos());
+        return "album/formulario";
     }
 
     @GetMapping("/eliminar/{id}")
-    public String eliminarAlbum(@PathVariable Long id) {
+    public String eliminar(@PathVariable Long id) {
         albumServicio.eliminar(id);
-        return "redirect:/admin/albumes";
+        return "redirect:/albumes";
     }
 }
