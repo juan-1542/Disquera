@@ -5,6 +5,7 @@ import co.edu.ucentral.disquera.Persistencia.Repositorio.AlbumRepositorio;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AlbumServicio {
@@ -19,19 +20,19 @@ public class AlbumServicio {
         return albumRepositorio.findAll();
     }
 
-    public Album buscarPorId(Long id) {
-        return albumRepositorio.findById(id).orElse(null);
+    public Optional<Album> buscarPorId(Long id) {
+        return albumRepositorio.findById(id);
     }
 
-    public void guardar(Album album) {
-        albumRepositorio.save(album);
+    public Album guardar(Album album) {
+        return albumRepositorio.save(album);
     }
 
     public void eliminar(Long id) {
         albumRepositorio.deleteById(id);
     }
 
-    public List<Album> listarPorArtista(Long artistaId) {
-        return albumRepositorio.findByArtistaId(artistaId);
+    public List<Album> buscarPorUsuario(String usuario) {
+        return albumRepositorio.findByUsuarioUsuario(usuario);
     }
 }

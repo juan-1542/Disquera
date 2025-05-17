@@ -19,7 +19,6 @@ public class UsuarioServicio {
 
     // Registrar nuevo usuario
     public void registrarUsuario(Usuario usuario) {
-        // Encriptar la contraseña antes de guardar
         String contrasenaEncriptada = passwordEncoder.encode(usuario.getContrasena());
         usuario.setContrasena(contrasenaEncriptada);
         usuarioRepositorio.save(usuario);
@@ -28,6 +27,11 @@ public class UsuarioServicio {
     // Obtener todos los usuarios
     public List<Usuario> obtenerTodos() {
         return usuarioRepositorio.findAll();
+    }
+
+    // Obtener usuarios con rol ARTISTA
+    public List<Usuario> listarArtistas() {
+        return usuarioRepositorio.findByRol(Usuario.Rol.ARTISTA);
     }
 
     // Borrar usuario
@@ -40,12 +44,12 @@ public class UsuarioServicio {
         }
     }
 
-    // Buscar usuario por nombre de usuario (username)
+    // Buscar usuario por nombre de usuario
     public Usuario buscarPorUsuario(String nombreUsuario) {
         return usuarioRepositorio.findByUsuario(nombreUsuario).orElse(null);
     }
 
-    // Autenticación: buscar usuario y verificar contraseña
+    // Autenticación
     public Usuario autenticar(String nombreUsuario, String contrasena) {
         Usuario usuario = buscarPorUsuario(nombreUsuario);
         if (usuario != null && passwordEncoder.matches(contrasena, usuario.getContrasena())) {
@@ -53,20 +57,20 @@ public class UsuarioServicio {
         }
         return null;
     }
+
     public Usuario buscarPorCorreo(String correo) {
         return usuarioRepositorio.findByCorreo(correo).orElse(null);
     }
 
     public void actualizarUsuario(Usuario usuarioActualizado) {
-        // Aquí se actualiza el usuario en la base de datos
         usuarioRepositorio.save(usuarioActualizado);
     }
+
     public Usuario buscarPorCodigo(String codigo) {
         return usuarioRepositorio.findByCodigoRecuperacion(codigo).orElse(null);
     }
+
     public PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-
 }
