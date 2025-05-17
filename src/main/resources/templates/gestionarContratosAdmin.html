@@ -167,7 +167,13 @@
             </form>
         </div>
 
-        <div th:if="${contrato.estado != 'Pendiente'}" class="no-disponible">
+        <!-- Botón para descargar PDF disponible si contrato NO es Pendiente -->
+        <div th:if="${contrato.estado != 'Pendiente'}" class="acciones">
+            <a th:href="@{'/contratos/pdf/' + ${contrato.id}}" class="btn btn-sm btn-success" target="_blank"
+               style="width: 100%;">Descargar Contrato PDF</a>
+        </div>
+
+        <div th:if="${contrato.estado == 'Pendiente'}" class="no-disponible">
             <span>No disponible</span>
         </div>
     </div>

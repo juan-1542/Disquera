@@ -93,6 +93,7 @@
             <td>
                 <a th:href="@{'/contratos/editar/' + ${contrato.id}}" class="btn btn-sm btn-primary">Editar</a>
                 <a th:href="@{'/contratos/eliminar/' + ${contrato.id}}" class="btn btn-sm btn-danger" onclick="return confirm('¿Estás seguro de eliminar este contrato?')">Eliminar</a>
+                <a th:href="@{'/contratos/pdf/' + ${contrato.id}}" class="btn btn-sm btn-success">Descargar PDF</a>
             </td>
         </tr>
         </tbody>
