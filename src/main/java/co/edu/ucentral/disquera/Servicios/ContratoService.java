@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ContratoService {
@@ -56,6 +57,17 @@ public class ContratoService {
                 contrato.setFechaInicio(LocalDate.now());
                 contrato.setFechaVencimiento(contrato.getFechaInicio().plusMonths(contrato.getDuracionMeses()));
             }
+            contratoRepositorio.save(contrato);
+        }
+    }
+
+    // Rechazar contrato con motivo
+    public void rechazarContrato(Long id, String motivo) {
+        Optional<Contrato> contratoOpt = contratoRepositorio.findById(id);
+        if (contratoOpt.isPresent()) {
+            Contrato contrato = contratoOpt.get();
+            contrato.setEstado("Rechazado");
+            contrato.setMotivoRechazo(motivo);
             contratoRepositorio.save(contrato);
         }
     }

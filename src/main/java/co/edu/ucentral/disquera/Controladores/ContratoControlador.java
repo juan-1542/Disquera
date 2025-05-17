@@ -31,6 +31,7 @@ public class ContratoControlador {
 
     private final ContratoService contratoService;
 
+
     @Autowired
     public ContratoControlador(ContratoService contratoService) {
         this.contratoService = contratoService;
@@ -126,12 +127,12 @@ public class ContratoControlador {
         return "redirect:/contratos/admin/contratos";
     }
 
-    // Rechazar contrato
-    @GetMapping("/admin/rechazar/{id}")
-    public String rechazarContrato(@PathVariable Long id) {
-        contratoService.actualizarEstado(id, "Rechazado");
+    @PostMapping("/admin/rechazar")
+    public String rechazarContrato(@RequestParam Long id, @RequestParam String motivo) {
+        contratoService.rechazarContrato(id, motivo);
         return "redirect:/contratos/admin/contratos";
     }
+
     @GetMapping("/pdf/{id}")
     public ResponseEntity<byte[]> descargarContratoPdf(@PathVariable Long id) {
         Contrato contrato = contratoService.listarContratos().stream()
@@ -217,4 +218,5 @@ public class ContratoControlador {
             return ResponseEntity.status(500).build();
         }
     }
+
 }

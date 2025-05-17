@@ -19,7 +19,8 @@ public class Contrato {
     private LocalDate fechaCreacion;
     private LocalDate fechaInicio;
     private LocalDate fechaVencimiento;
-    private String estado; // Valores posibles: "Pendiente", "Activo", "Rechazado", "Vencido"
+    private String estado;// Valores posibles: "Pendiente", "Activo", "Rechazado", "Vencido"
+    private String motivoRechazo;
 
     @ManyToOne
     @JoinColumn(name = "artista_id")
@@ -138,4 +139,12 @@ public class Contrato {
             return "Activo";
         }
     }
+    public String getMotivoRechazo() {
+        return motivoRechazo;
+    }
+
+    public void setMotivoRechazo(String motivoRechazo) {
+        this.motivoRechazo = motivoRechazo;
+    }
+
     }
