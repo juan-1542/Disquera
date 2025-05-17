@@ -18,7 +18,7 @@ public class MailConfig {
         mailSender.setPort(587);
 
         mailSender.setUsername("startunedirect@gmail.com");
-        mailSender.setPassword("luisyjuan123");
+        mailSender.setPassword("vyqo hbyh rntq aaoc");
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.smtp.auth", "true");

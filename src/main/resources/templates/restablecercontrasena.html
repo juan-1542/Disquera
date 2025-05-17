@@ -2,14 +2,148 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Restablecer Contraseña</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #fff;
+            color: #333;
+            font-family: 'Roboto', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .home-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: transparent;
+            border: 1px solid #1A3C6D;
+            color: #1A3C6D;
+            padding: 8px 15px;
+            border-radius: 25px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .home-btn:hover {
+            background-color: #1A3C6D;
+            color: #fff;
+        }
+
+        .reset-container {
+            background: #1A3C6D;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .logo {
+            max-height: 60px;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-family: 'Montserrat', sans-serif;
+            color: #fff;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #fff;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            border-radius: 5px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            transition: border-color 0.3s;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            border-color: #D4AF37;
+            box-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
+            outline: none;
+        }
+
+        .btn-reset {
+            background-color: #fff;
+            color: #1A3C6D;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 25px;
+            margin-top: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .btn-reset:hover {
+            background-color: #D4AF37;
+            color: #1A3C6D;
+        }
+
+        /* Estilo para el mensaje de éxito */
+        .mensaje-exito {
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.2em;
+            margin-bottom: 1rem;
+        }
+
+        /* Estilo para mensajes de error */
+        .alert {
+            background-color: #ff4d4f;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+    </style>
 </head>
 <body>
-<form th:action="@{/restablecercontrasena}" method="post">
-  <label for="contrasena">Nueva contraseña:</label>
-  <input type="password" id="contrasena" name="contrasena" required placeholder="Ingresa tu nueva contraseña">
-  <button type="submit">Restablecer contraseña</button>
-</form>
+<a href="/iniciosesion" class="home-btn">Volver al inicio</a>
+<div class="reset-container">
+    <img src="/images/logo-startuneblanco.png"  alt="Logo" class="logo">
+    <h2>Restablecer Contraseña</h2>
 
+    <!-- Mensaje con botón para volver a inicio de sesión -->
+    <div th:if="${contrasenaRestablecida}">
+        <p th:text="${mensaje}" class="mensaje-exito"></p>
+        <button type="button" class="btn-reset" onclick="window.location.href='/iniciosesion'">
+            Volver a iniciar sesión
+        </button>
+    </div>
+
+    <!-- Formulario solo si no se ha restablecido -->
+    <form th:if="${contrasenaRestablecida == null}" th:action="@{/restablecercontrasena}" method="post">
+        <input type="hidden" name="usuario" th:value="${usuario}" />
+
+        <label for="nuevaContrasena" class="form-label">Nueva contraseña:</label>
+        <input type="password" id="nuevaContrasena" name="nuevaContrasena" class="form-control" required placeholder="Ingresa tu nueva contraseña">
+
+        <button type="submit" class="btn-reset">Restablecer contraseña</button>
+    </form>
+
+    <!-- Mensaje de error si existe -->
+    <div th:if="${error}" class="alert" th:text="${error}"></div>
+</div>
 </body>
 </html>
