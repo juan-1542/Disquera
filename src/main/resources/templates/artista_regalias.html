@@ -3,76 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${username} + ' - Tus Regalías'">Regalías</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        body { font-family: Arial, sans-serif; background: #f4f4ff; padding: 40px; }
-        .container { max-width: 1000px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px #ccc; }
-        h2, h3 { color: #1a3c6d; text-align: center; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 12px; border: 1px solid #ccc; text-align: left; }
-        th { background-color: #1a3c6d; color: white; }
-        tr:nth-child(even) { background-color: #f9f9f9; }
-        .total { font-weight: bold; margin-top: 20px; font-size: 1.2em; }
-        .button { background-color: #1a3c6d; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 20px; }
-        .button:hover { background-color: #0f2a4d; }
-        .success { color: green; }
-        .error { color: red; }
+        :root {
+            --startune-purple: #4B0082;
+            --startune-blue: #0052CC; /* Azul rey */
+            --startune-gold: #FFD700;
+            --startune-dark: #1C2526;
+            --startune-light: #F5F6F5;
+        }
+
+        body {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--startune-light) 100%);
+            color: var(--startune-dark);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .navbar-brand img {
+            height: 50px;
+        }
+
+        .header-section {
+            background: linear-gradient(90deg, var(--startune-purple), var(--startune-blue));
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin-bottom: 2rem;
+        }
+
+        .header-section h1 {
+            color: #FFFFFF;
+            font-weight: 700;
+        }
+
+        .header-section p {
+            color: #FFFFFF;
+            opacity: 0.9;
+        }
+
+        .btn-startune {
+            background: var(--startune-blue);
+            border: none;
+            color: var(--startune-light);
+        }
+
+        .btn-startune:hover {
+            background: var(--startune-gold);
+            color: var(--startune-dark);
+        }
+
+        .btn-back {
+            background: var(--startune-blue);
+            border: none;
+            color: var(--startune-light);
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-back:hover {
+            background: var(--startune-gold);
+            color: var(--startune-dark);
+        }
+
+        .btn-download {
+            background: #28a745;
+            border: none;
+            color: var(--startune-light);
+        }
+
+        .btn-download:hover {
+            background: #218838;
+            color: var(--startune-light);
+        }
+
+        .alert {
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--startune-purple);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .total {
+            font-weight: bold;
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
     </style>
 </head>
 <body>
-<div class="container">
-    <h2 th:text="${username} + ' - Tus Regalías'"></h2>
+<!-- Navbar -->
+<nav class="navbar navbar-light bg-transparent">
+    <div class="container">
+        <div class="d-flex flex-column align-items-start">
+            <a class="navbar-brand" href="#">
+                <img src="/images/startune-logo.png" alt="Startune Logo">
+            </a>
+            <a th:href="@{/artista/panel}" class="btn btn-back">
+                <i class="fas fa-arrow-left me-2"></i>Volver al Panel
+            </a>
+        </div>
+        <div>
+            <a class="btn btn-outline-primary ms-2" th:href="@{/iniciosesion}">Cerrar Sesión</a>
+        </div>
+    </div>
+</nav>
 
-    <div th:if="${mensaje}" class="success" th:text="${mensaje}"></div>
-    <div th:if="${error}" class="error" th:text="${error}"></div>
-
-    <h3>Regalías Pendientes</h3>
-    <table>
-        <tr>
-            <th>Lanzamiento</th>
-            <th>Unidades Vendidas</th>
-            <th>Formato</th>
-            <th>Regalías ($)</th>
-            <th>Fecha de Venta</th>
-        </tr>
-        <tr th:each="venta : ${ventas}">
-            <td th:text="${venta.album != null ? venta.album.nombre : venta.cancion.titulo}"></td>
-            <td th:text="${venta.unidadesVendidas}"></td>
-            <td th:text="${venta.formato}"></td>
-            <td th:text="${#numbers.formatDecimal(venta.montoRegalias, 1, 2)}"></td>
-            <td th:text="${#temporals.format(venta.fechaVenta, 'dd/MM/yyyy')}"></td>
-        </tr>
-    </table>
-
-    <div class="total">
-        Total de Regalías Pendientes: $<span th:text="${#numbers.formatDecimal(totalRegalias, 1, 2)}"></span>
+<!-- Header -->
+<div class="container py-5">
+    <div class="header-section">
+        <h1 th:text="${username} + ' - Tus Regalías'"></h1>
+        <p class="lead">Consulta tus regalías pendientes y el estado de tus pagos</p>
     </div>
 
-    <form th:action="@{/artista/regalias/solicitar}" method="post">
-        <button type="submit" class="button">Solicitar Pago</button>
-    </form>
+    <!-- Mensajes -->
+    <div th:if="${mensaje}" class="alert alert-success">
+        <i class="fas fa-check-circle me-2"></i>
+        <span th:text="${mensaje}"></span>
+    </div>
+    <div th:if="${error}" class="alert alert-danger">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        <span th:text="${error}"></span>
+    </div>
 
-    <h3>Pagos Solicitados</h3>
-    <table>
-        <tr>
-            <th>Lanzamiento</th>
-            <th>Unidades Vendidas</th>
-            <th>Formato</th>
-            <th>Regalías ($)</th>
-            <th>Fecha de Venta</th>
-            <th>Estado</th>
-        </tr>
-        <tr th:each="pago : ${pagosSolicitados}">
-            <td th:text="${pago.album != null ? pago.album.nombre : pago.cancion.titulo}"></td>
-            <td th:text="${pago.unidadesVendidas}"></td>
-            <td th:text="${pago.formato}"></td>
-            <td th:text="${#numbers.formatDecimal(pago.montoRegalias, 1, 2)}"></td>
-            <td th:text="${#temporals.format(pago.fechaVenta, 'dd/MM/yyyy')}"></td>
-            <td th:text="${pago.estadoPago}"></td>
-        </tr>
-    </table>
-    <div th:if="${#lists.isEmpty(pagosSolicitados)}" class="text-center mt-4">
-        <p>No hay pagos solicitados o pagados.</p>
+    <!-- Regalías Pendientes -->
+    <h2 class="mb-4">Regalías Pendientes</h2>
+    <div class="row">
+        <div class="col-md-12">
+            <table>
+                <tr>
+                    <th>Lanzamiento</th>
+                    <th>Unidades Vendidas</th>
+                    <th>Formato</th>
+                    <th>Regalías ($)</th>
+                    <th>Fecha de Venta</th>
+                </tr>
+                <tr th:each="venta : ${ventas}">
+                    <td th:text="${venta.album != null ? venta.album.nombre : venta.cancion.titulo}"></td>
+                    <td th:text="${venta.unidadesVendidas}"></td>
+                    <td th:text="${venta.formato}"></td>
+                    <td th:text="${#numbers.formatDecimal(venta.montoRegalias, 1, 2)}"></td>
+                    <td th:text="${#temporals.format(venta.fechaVenta, 'dd/MM/yyyy')}"></td>
+                </tr>
+            </table>
+            <div th:if="${#lists.isEmpty(ventas)}" class="text-center mt-4">
+                <p>No hay regalías pendientes.</p>
+            </div>
+            <div class="total">
+                Total de Regalías Pendientes: $<span th:text="${#numbers.formatDecimal(totalRegalias, 1, 2)}"></span>
+            </div>
+            <form th:action="@{/artista/regalias/solicitar}" method="post">
+                <button type="submit" class="btn btn-startune mt-3">
+                    <i class="fas fa-money-check-alt me-2"></i>Solicitar Pago
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Pagos Solicitados -->
+    <h2 class="mb-4">Pagos Solicitados</h2>
+    <div class="row">
+        <div class="col-md-12">
+            <a th:href="@{/artista/regalias/reporte}" class="btn btn-download mb-3">
+                <i class="fas fa-file-pdf me-2"></i>Descargar Reporte PDF
+            </a>
+            <table>
+                <tr>
+                    <th>Lanzamiento</th>
+                    <th>Unidades Vendidas</th>
+                    <th>Formato</th>
+                    <th>Regalías ($)</th>
+                    <th>Fecha de Venta</th>
+                    <th>Estado</th>
+                </tr>
+                <tr th:each="pago : ${pagosSolicitados}">
+                    <td th:text="${pago.album != null ? pago.album.nombre : pago.cancion.titulo}"></td>
+                    <td th:text="${pago.unidadesVendidas}"></td>
+                    <td th:text="${pago.formato}"></td>
+                    <td th:text="${#numbers.formatDecimal(pago.montoRegalias, 1, 2)}"></td>
+                    <td th:text="${#temporals.format(pago.fechaVenta, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${pago.estadoPago}"></td>
+                </tr>
+            </table>
+            <div th:if="${#lists.isEmpty(pagosSolicitados)}" class="text-center mt-4">
+                <p>No hay pagos solicitados o pagados.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center mt-4">
+        <p>© 2025 Startune Records. All rights reserved.</p>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

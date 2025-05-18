@@ -60,7 +60,11 @@
             color: var(--startune-dark);
         }
 
-        .form-control, .form-select {
+        .form-control {
+            border-radius: 10px;
+        }
+
+        .form-select {
             border-radius: 10px;
         }
 
@@ -109,9 +113,8 @@
                         <strong>Artista:</strong> <span th:text="${album.usuario.nombre}"></span><br>
                         <strong>Fecha de Lanzamiento:</strong>
                         <span th:text="${#dates.format(album.fechaLanzamiento, 'dd/MM/yyyy')}"></span><br>
-                        <strong>Género:</strong> <span th:text="${album.genero}"></span><br>
-                        <strong>Número de Canciones:</strong> <span th:text="${album.numeroCanciones}"></span><br>
-                        <strong>Formato de Distribución:</strong> <span th:text="${album.formatoDistribucion}"></span><br>
+                        <strong>Género:</strong> <span th:text="${album.generoMusical}"></span><br>
+                        <strong>Número de Canciones:</strong> <span th:text="${album.canciones.size()}"></span><br>
                         <strong>Porcentaje de Regalías:</strong>
                         <span th:with="contrato=${@contratoService.buscarContratoActivo(album.usuario.usuario)}"
                               th:text="${contrato != null ? contrato.porcentajeGanancia + '%' : 'Sin contrato activo'}"></span>

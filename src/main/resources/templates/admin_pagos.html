@@ -38,17 +38,6 @@
             font-weight: 700;
         }
 
-        .card-custom {
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            background: #FFFFFF;
-        }
-
-        .card-custom:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 15px rgba(0,183,235,0.3);
-        }
-
         .btn-startune {
             background: var(--startune-blue);
             border: none;
@@ -58,6 +47,30 @@
         .btn-startune:hover {
             background: var(--startune-gold);
             color: var(--startune-dark);
+        }
+
+        .btn-back {
+            background: var(--startune-blue);
+            border: none;
+            color: var(--startune-light);
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .btn-back:hover {
+            background: var(--startune-gold);
+            color: var(--startune-dark);
+        }
+
+        .btn-download {
+            background: #28a745;
+            border: none;
+            color: var(--startune-light);
+        }
+
+        .btn-download:hover {
+            background: #218838;
+            color: var(--startune-light);
         }
 
         .form-control, .form-select {
@@ -94,12 +107,16 @@
 <!-- Navbar -->
 <nav class="navbar navbar-light bg-transparent">
     <div class="container">
-        <a class="navbar-brand" href="#">
-            <img src="/images/startune-logo.png" alt="Startune Logo">
-        </a>
+        <div class="d-flex flex-column align-items-start">
+            <a class="navbar-brand" href="#">
+                <img src="/images/startune-logo.png" alt="Startune Logo">
+            </a>
+            <a href="/admin" class="btn btn-back">
+                <i class="fas fa-arrow-left me-2"></i>Volver al Panel
+            </a>
+        </div>
         <div>
-            <a class="btn btn-outline-primary" th:href="@{/admin}">Volver al Panel</a>
-            <a class="btn btn-outline-primary ms-2" th:href="@{/iniciosesion}">Cerrar Sesión</a>
+            <a class="btn btn-outline-primary ms-2" href="/iniciosesion">Cerrar Sesión</a>
         </div>
     </div>
 </nav>
@@ -107,17 +124,39 @@
 <!-- Header -->
 <div class="container py-5">
     <div class="header-section">
-        <h1>Gestionar Pagos</h1>
-        <p class="lead text-white">Aprobar pagos de regalías solicitados por los artistas</p>
+        <h1>Gestión de Pagos</h1>
     </div>
 
     <!-- Mensajes -->
     <div th:if="${param.success}" class="alert alert-success">
-        Pago aprobado exitosamente.
+        <i class="fas fa-check-circle me-2"></i>
+        Acción realizada con éxito.
     </div>
-    <div th:if="${error}" class="alert alert-danger">
-        <span th:text="${error}"></span>
+    <div th:if="${param.error}" class="alert alert-danger">
+        <i class="fas fa-exclamation-circle me-2"></i>
+        <span th:text="${param.error}"></span>
     </div>
+
+    <!-- Filtro -->
+    <form th:action="@{/admin/pagos}" method="get" class="mb-4">
+        <div class="row">
+            <div class="col-md-6">
+                <select name="usuario" class="form-select">
+                    <option value="">Todos los artistas</option>
+                    <option th:each="artista : ${artistas}"
+                            th:value="${artista.usuario}"
+                            th:text="${artista.nombre}"
+                            th:selected="${artista.usuario == usuario}">
+                    </option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <button type="submit" class="btn btn-startune w-100">
+                    <i class="fas fa-filter me-2"></i>Filtrar
+                </button>
+            </div>
+        </div>
+    </form>
 
     <!-- Pagos Solicitados -->
     <h2 class="mb-4">Pagos Solicitados</h2>
@@ -125,7 +164,6 @@
         <div class="col-md-12">
             <table>
                 <tr>
-                    <th>ID Venta</th>
                     <th>Artista</th>
                     <th>Lanzamiento</th>
                     <th>Unidades Vendidas</th>
@@ -135,7 +173,6 @@
                     <th>Acción</th>
                 </tr>
                 <tr th:each="venta : ${ventas}">
-                    <td th:text="${venta.id}"></td>
                     <td th:text="${venta.artista.nombre}"></td>
                     <td th:text="${venta.album != null ? venta.album.nombre : venta.cancion.titulo}"></td>
                     <td th:text="${venta.unidadesVendidas}"></td>
@@ -145,13 +182,49 @@
                     <td>
                         <form th:action="@{/admin/pagos/aprobar}" method="post">
                             <input type="hidden" name="ventaId" th:value="${venta.id}">
-                            <button type="submit" class="btn btn-startune">Aprobar Pago</button>
+                            <input type="hidden" name="usuario" th:value="${usuario}">
+                            <button type="submit" class="btn btn-startune btn-sm">
+                                <i class="fas fa-check me-2"></i>Aprobar
+                            </button>
                         </form>
                     </td>
                 </tr>
             </table>
             <div th:if="${#lists.isEmpty(ventas)}" class="text-center mt-4">
-                <p>No hay pagos solicitados pendientes.</p>
+                <p>No hay pagos solicitados.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagos Realizados -->
+    <h2 class="mb-4">Pagos Realizados</h2>
+    <div class="row">
+        <div class="col-md-12">
+            <div th:if="${usuario != null and not #strings.isEmpty(usuario)}">
+                <a th:href="@{/admin/pagos/reporte(usuario=${usuario})}" class="btn btn-download mb-3">
+                    <i class="fas fa-file-pdf me-2"></i>Descargar Reporte PDF
+                </a>
+            </div>
+            <table>
+                <tr>
+                    <th>Artista</th>
+                    <th>Lanzamiento</th>
+                    <th>Unidades Vendidas</th>
+                    <th>Formato</th>
+                    <th>Regalías ($)</th>
+                    <th>Fecha de Venta</th>
+                </tr>
+                <tr th:each="venta : ${ventasPagadas}">
+                    <td th:text="${venta.artista.nombre}"></td>
+                    <td th:text="${venta.album != null ? venta.album.nombre : venta.cancion.titulo}"></td>
+                    <td th:text="${venta.unidadesVendidas}"></td>
+                    <td th:text="${venta.formato}"></td>
+                    <td th:text="${#numbers.formatDecimal(venta.montoRegalias, 1, 2)}"></td>
+                    <td th:text="${#temporals.format(venta.fechaVenta, 'dd/MM/yyyy')}"></td>
+                </tr>
+            </table>
+            <div th:if="${#lists.isEmpty(ventasPagadas)}" class="text-center mt-4">
+                <p>No hay pagos realizados.</p>
             </div>
         </div>
     </div>
