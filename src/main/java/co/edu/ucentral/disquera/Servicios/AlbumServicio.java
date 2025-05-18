@@ -31,6 +31,9 @@ public class AlbumServicio {
     public void eliminar(Long id) {
         albumRepositorio.deleteById(id);
     }
+    public List<Album> buscarPorEstado(Album.Estado estado) {
+        return albumRepositorio.findByEstado(estado);
+    }
 
     public List<Album> buscarPorUsuario(String usuario) {
         return albumRepositorio.findByUsuarioUsuario(usuario);

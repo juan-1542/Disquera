@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface AlbumRepositorio extends JpaRepository<Album, Long> {
     List<Album> findByUsuarioUsuario(String usuario);
+    List<Album> findByEstado(Album.Estado estado);
 }

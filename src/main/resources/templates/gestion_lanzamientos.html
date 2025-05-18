@@ -39,7 +39,7 @@
             color: var(--startune-dark);
         }
         .btn-danger {
-            background: #DC Veronica Mars3545;
+            background: #DC3545;
         }
         .btn-danger:hover {
             background: #C82333;
@@ -52,6 +52,9 @@
         }
         .alert {
             margin-bottom: 1rem;
+        }
+        .table th, .table td {
+            vertical-align: middle;
         }
     </style>
 </head>
@@ -80,65 +83,87 @@
         </div>
         <div class="card-body">
             <!-- Lista de álbumes -->
-            <h6 class="mb-3">Álbumes</h6>
+            <h6 class="mb-3">Álbumes Pendientes</h6>
             <table class="table table-bordered">
                 <thead>
                 <tr>
                     <th>Nombre</th>
                     <th>Artista</th>
+                    <th>Fecha de Lanzamiento</th>
+                    <th>Número de Canciones</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="album : ${albumes}">
-                    <td th:text="${album.nombre}"></td>
-                    <td th:text="${album.usuario.nombre}"></td>
-                    <td th:text="${album.estado}"></td>
+                <tr th:each="album : ${albumesPendientes}">
+                    <td th:text="${album.nombre} ?: 'Sin nombre'"></td>
+                    <td th:text="${album.usuario?.nombre} ?: 'Sin artista'"></td>
                     <td>
-                        <form th:action="@{/lanzamientos/album/aprobar/{id}(id=${album.id})}" method="post" class="d-inline">
+                        <span th:if="${album.fechaLanzamiento != null}"
+                              th:text="${#dates.format(album.fechaLanzamiento, 'dd/MM/yyyy')} ?: 'Sin fecha'"></span>
+                        <span th:unless="${album.fechaLanzamiento != null}">Sin fecha</span>
+                    </td>
+                    <td th:text="${album.numeroCanciones} ?: 0"></td>
+                    <td th:text="${album.estado} ?: 'Sin estado'"></td>
+                    <td>
+                        <form th:action="@{/admin/lanzamiento/aprobar/album/{id}(id=${album.id})}" method="post" class="d-inline">
                             <button type="submit" class="btn btn-startune btn-sm" th:disabled="${album.estado == 'APROBADO'}">
                                 Aprobar
                             </button>
                         </form>
-                        <form th:action="@{/lanzamientos/album/rechazar/{id}(id=${album.id})}" method="post" class="d-inline">
+                        <form th:action="@{/admin/lanzamiento/rechazar/album/{id}(id=${album.id})}" method="post" class="d-inline">
                             <button type="submit" class="btn btn-danger btn-sm" th:disabled="${album.estado == 'RECHAZADO'}">
                                 Rechazar
                             </button>
                         </form>
                     </td>
                 </tr>
+                <tr th:if="${#lists.isEmpty(albumesPendientes)}">
+                    <td colspan="6" class="text-center">No hay álbumes pendientes.</td>
+                </tr>
                 </tbody>
             </table>
 
             <!-- Lista de canciones -->
-            <h6 class="mb-3 mt-4">Canciones</h6>
+            <h6 class="mb-3 mt-4">Canciones Pendientes</h6>
             <table class="table table-bordered">
                 <thead>
                 <tr>
                     <th>Título</th>
+                    <th>Duración</th>
+                    <th>Colaboradores</th>
                     <th>Álbum</th>
+                    <th>Artista</th>
+                    <th>Es Sencillo</th>
                     <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="cancion : ${canciones}">
-                    <td th:text="${cancion.titulo}"></td>
-                    <td th:text="${cancion.album?.nombre} ?: 'Sin álbum'"></td>
-                    <td th:text="${cancion.estado}"></td>
+                <tr th:each="cancion : ${cancionesPendientes}">
+                    <td th:text="${cancion.titulo} ?: 'Sin título'"></td>
+                    <td th:text="${cancion.duracion} ?: 'Sin duración'"></td>
+                    <td th:text="${cancion.colaboradores} ?: 'Sin colaboradores'"></td>
+                    <td th:text="${cancion.album?.nombre} ?: 'Sencillo'"></td>
+                    <td th:text="${cancion.album?.usuario?.nombre} ?: 'Sin artista'"></td>
+                    <td th:text="${cancion.esSencillo} ? 'Sí' : 'No'"></td>
+                    <td th:text="${cancion.estado} ?: 'Sin estado'"></td>
                     <td>
-                        <form th:action="@{/lanzamientos/cancion/aprobar/{id}(id=${cancion.id})}" method="post" class="d-inline">
+                        <form th:action="@{/admin/lanzamiento/aprobar/cancion/{id}(id=${cancion.id})}" method="post" class="d-inline">
                             <button type="submit" class="btn btn-startune btn-sm" th:disabled="${cancion.estado == 'APROBADO'}">
                                 Aprobar
                             </button>
                         </form>
-                        <form th:action="@{/lanzamientos/cancion/rechazar/{id}(id=${cancion.id})}" method="post" class="d-inline">
+                        <form th:action="@{/admin/lanzamiento/rechazar/cancion/{id}(id=${cancion.id})}" method="post" class="d-inline">
                             <button type="submit" class="btn btn-danger btn-sm" th:disabled="${cancion.estado == 'RECHAZADO'}">
                                 Rechazar
                             </button>
                         </form>
                     </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(cancionesPendientes)}">
+                    <td colspan="8" class="text-center">No hay canciones pendientes.</td>
                 </tr>
                 </tbody>
             </table>

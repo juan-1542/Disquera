@@ -28,6 +28,13 @@ public class CancionServicio {
         return cancionRepositorio.save(cancion);
     }
 
+    public List<Cancion> buscarPorEstado(Cancion.Estado estado) {
+        return cancionRepositorio.findByEstado(estado);
+    }
+    public List<Cancion> buscarPorIds(List<Long> ids) {
+        return cancionRepositorio.findAllById(ids);
+    }
+
     public List<Cancion> listarSencillos() {
         return cancionRepositorio.findByEsSencilloTrue();
     }

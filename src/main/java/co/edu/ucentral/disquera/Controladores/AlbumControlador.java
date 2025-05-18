@@ -7,8 +7,6 @@ import co.edu.ucentral.disquera.Servicios.AlbumServicio;
 import co.edu.ucentral.disquera.Servicios.CancionServicio;
 import co.edu.ucentral.disquera.Servicios.UsuarioServicio;
 import jakarta.validation.Valid;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,6 +19,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 @Controller
@@ -41,20 +40,10 @@ public class AlbumControlador {
 
     @GetMapping
     public String listar(Model model) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated() && !authentication.getPrincipal().equals("anonymousUser")) {
-            LOGGER.info("Usuario autenticado: " + authentication.getName() + ", Authorities: " + authentication.getAuthorities());
-            String username = authentication.getName();
-            Usuario usuario = usuarioServicio.buscarPorUsuario(username);
-            if (usuario != null && usuario.getRol() == Usuario.Rol.ARTISTA) {
-                model.addAttribute("albumes", albumServicio.buscarPorUsuario(username));
-            } else {
-                model.addAttribute("albumes", albumServicio.listarTodos());
-            }
-        } else {
-            LOGGER.warning("No hay usuario autenticado, mostrando todos los álbumes");
-            model.addAttribute("albumes", albumServicio.listarTodos());
-        }
+        LOGGER.info("Listando álbumes");
+        List<Album> albumes = albumServicio.listarTodos();
+        LOGGER.info("Álbumes totales encontrados: " + albumes.size());
+        model.addAttribute("albumes", albumes);
         return "albumes";
     }
 
@@ -62,8 +51,24 @@ public class AlbumControlador {
     public String formularioNuevo(Model model) {
         Album album = new Album();
         album.setCanciones(new ArrayList<>());
+        List<Cancion> sencillos = cancionServicio.listarSencillos();
+        List<Usuario> artistas = usuarioServicio.listarArtistas();
+        LOGGER.info("Sencillos encontrados: " + sencillos.size());
+        LOGGER.info("Artistas encontrados: " + artistas.size());
+        for (Cancion sencillo : sencillos) {
+            LOGGER.info("Sencillo: ID=" + sencillo.getId() +
+                    ", Título=" + sencillo.getTitulo() +
+                    ", Estado=" + sencillo.getEstado() +
+                    ", Duración=" + sencillo.getDuracion() +
+                    ", Colaboradores=" + sencillo.getColaboradores() +
+                    ", EsSencillo=" + sencillo.isEsSencillo());
+        }
+        for (Usuario artista : artistas) {
+            LOGGER.info("Artista: Usuario=" + artista.getUsuario() + ", Nombre=" + artista.getNombre());
+        }
         model.addAttribute("album", album);
-        model.addAttribute("sencillos", cancionServicio.listarSencillos());
+        model.addAttribute("sencillos", sencillos);
+        model.addAttribute("artistas", artistas);
         return "formulario_album";
     }
 
@@ -71,34 +76,43 @@ public class AlbumControlador {
     public String guardar(@Valid @ModelAttribute Album album,
                           BindingResult bindingResult,
                           @RequestParam("portadaFile") MultipartFile portadaFile,
+                          @RequestParam(value = "sencilloIds", required = false) List<Long> sencilloIds,
+                          @RequestParam("usuarioId") String usuarioId,
                           RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
+            LOGGER.warning("Errores de validación en el formulario: " + bindingResult.getAllErrors());
             redirectAttributes.addFlashAttribute("error", "Errores en el formulario: " + bindingResult.getAllErrors().get(0).getDefaultMessage());
             return "redirect:/albumes/nuevo";
         }
         try {
-            // Validar que el usuario autenticado sea un artista
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication == null || !authentication.isAuthenticated() || authentication.getPrincipal().equals("anonymousUser")) {
-                LOGGER.severe("No hay usuario autenticado en /albumes/guardar");
-                redirectAttributes.addFlashAttribute("error", "Debe iniciar sesión para enviar álbumes.");
-                return "redirect:/login";
+            // Asignar usuario desde usuarioId
+            Usuario usuario = usuarioServicio.buscarPorUsuario(usuarioId);
+            if (usuario == null) {
+                throw new IllegalArgumentException("Usuario no encontrado: " + usuarioId);
             }
-            String username = authentication.getName();
-            Usuario usuario = usuarioServicio.buscarPorUsuario(username);
-            if (usuario == null || usuario.getRol() != Usuario.Rol.ARTISTA) {
-                redirectAttributes.addFlashAttribute("error", "Usuario no autorizado para enviar álbumes.");
-                return "redirect:/albumes/nuevo";
-            }
-            // Asignar el usuario autenticado al álbum
             album.setUsuario(usuario);
-            // Establecer estado como PENDIENTE
+            // Establecer estado PENDIENTE
             album.setEstado(Album.Estado.PENDIENTE);
-            // Asignar estado PENDIENTE a todas las canciones
+            // Manejar canciones
             if (album.getCanciones() != null) {
-                album.getCanciones().forEach(cancion -> cancion.setEstado(Cancion.Estado.PENDIENTE));
+                album.getCanciones().forEach(cancion -> {
+                    cancion.setEstado(Cancion.Estado.PENDIENTE);
+                    cancion.setAlbum(album);
+                });
+            } else {
+                album.setCanciones(new ArrayList<>());
             }
-            // Manejar la carga de la portada
+            // Manejar sencillos seleccionados
+            if (sencilloIds != null && !sencilloIds.isEmpty()) {
+                List<Cancion> sencillos = cancionServicio.buscarPorIds(sencilloIds);
+                LOGGER.info("Sencillos seleccionados para asociar: " + sencillos.size());
+                for (Cancion sencillo : sencillos) {
+                    sencillo.setAlbum(album);
+                    sencillo.setEstado(Cancion.Estado.PENDIENTE);
+                    album.getCanciones().add(sencillo);
+                }
+            }
+            // Manejar portada
             if (!portadaFile.isEmpty()) {
                 String fileName = System.currentTimeMillis() + "_" + portadaFile.getOriginalFilename();
                 Path path = Paths.get("src/main/resources/static/images/" + fileName);
@@ -106,11 +120,20 @@ public class AlbumControlador {
                 album.setPortada("/images/" + fileName);
             }
             // Actualizar número de canciones
-            album.setNumeroCanciones(album.getCanciones() != null ? album.getCanciones().size() : 0);
+            album.setNumeroCanciones(album.getCanciones().size());
+            LOGGER.info("Guardando álbum: Nombre=" + album.getNombre() +
+                    ", FechaLanzamiento=" + album.getFechaLanzamiento() +
+                    ", NumeroCanciones=" + album.getNumeroCanciones() +
+                    ", Usuario=" + (album.getUsuario() != null ? album.getUsuario().getNombre() : "null"));
             albumServicio.guardar(album);
             redirectAttributes.addFlashAttribute("success", "Álbum enviado para aprobación.");
             return "redirect:/albumes";
+        } catch (IOException e) {
+            LOGGER.severe("Error al cargar la portada: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Error al cargar la portada: " + e.getMessage());
+            return "redirect:/albumes/nuevo";
         } catch (Exception e) {
+            LOGGER.severe("Error al guardar el álbum: " + e.getMessage());
             redirectAttributes.addFlashAttribute("error", "Error al enviar el álbum: " + e.getMessage());
             return "redirect:/albumes/nuevo";
         }
@@ -121,10 +144,21 @@ public class AlbumControlador {
         try {
             Album album = albumServicio.buscarPorId(id)
                     .orElseThrow(() -> new IllegalArgumentException("Álbum no encontrado con ID: " + id));
+            List<Cancion> sencillos = cancionServicio.listarSencillos();
+            List<Usuario> artistas = usuarioServicio.listarArtistas();
+            LOGGER.info("Editando álbum: ID=" + album.getId() +
+                    ", Nombre=" + album.getNombre() +
+                    ", FechaLanzamiento=" + album.getFechaLanzamiento() +
+                    ", NumeroCanciones=" + album.getNumeroCanciones() +
+                    ", Usuario=" + (album.getUsuario() != null ? album.getUsuario().getNombre() : "null"));
+            LOGGER.info("Sencillos encontrados para edición: " + sencillos.size());
+            LOGGER.info("Artistas encontrados: " + artistas.size());
             model.addAttribute("album", album);
-            model.addAttribute("sencillos", cancionServicio.listarSencillos());
+            model.addAttribute("sencillos", sencillos);
+            model.addAttribute("artistas", artistas);
             return "formulario_album";
         } catch (IllegalArgumentException e) {
+            LOGGER.warning("Error al editar álbum: " + e.getMessage());
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/albumes";
         }
@@ -134,9 +168,11 @@ public class AlbumControlador {
     public String eliminar(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             albumServicio.eliminar(id);
+            LOGGER.info("Álbum eliminado: ID=" + id);
             redirectAttributes.addFlashAttribute("success", "Álbum eliminado exitosamente.");
             return "redirect:/albumes";
         } catch (Exception e) {
+            LOGGER.severe("Error al eliminar álbum: " + e.getMessage());
             redirectAttributes.addFlashAttribute("error", "Error al eliminar el álbum: " + e.getMessage());
             return "redirect:/albumes";
         }
