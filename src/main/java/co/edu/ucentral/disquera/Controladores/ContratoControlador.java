@@ -1,17 +1,14 @@
 package co.edu.ucentral.disquera.Controladores;
 
 import co.edu.ucentral.disquera.Persistencia.Entidades.Contrato;
+import co.edu.ucentral.disquera.Persistencia.Entidades.Usuario;
 import co.edu.ucentral.disquera.Servicios.ContratoService;
+import co.edu.ucentral.disquera.Servicios.UsuarioServicio;
 import com.itextpdf.io.font.constants.StandardFonts;
-import com.itextpdf.io.source.ByteArrayOutputStream;
 import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.io.image.ImageData;
-import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.layout.element.Image;
-import java.io.InputStream;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Paragraph;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,19 +19,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.ByteArrayOutputStream;
 import java.util.List;
-
 
 @Controller
 @RequestMapping("/contratos")
 public class ContratoControlador {
 
     private final ContratoService contratoService;
-
+    private final UsuarioServicio usuarioServicio;
 
     @Autowired
-    public ContratoControlador(ContratoService contratoService) {
+    public ContratoControlador(ContratoService contratoService, UsuarioServicio usuarioServicio) {
         this.contratoService = contratoService;
+        this.usuarioServicio = usuarioServicio;
     }
 
     // Página principal de gestión de contratos para artistas
@@ -58,12 +56,37 @@ public class ContratoControlador {
     @GetMapping("/nuevo")
     public String mostrarFormularioContrato(Model model) {
         model.addAttribute("contrato", new Contrato());
+        model.addAttribute("artistas", usuarioServicio.listarArtistas());
         return "generarContrato";
     }
 
     // Procesar envío del formulario y mostrar mensaje de confirmación
     @PostMapping("/guardar")
-    public String guardarContrato(@ModelAttribute("contrato") Contrato contrato, Model model) {
+    public String guardarContrato(
+            @RequestParam("artistaId") String artistaId,
+            @RequestParam("nombreArtistico") String nombreArtistico,
+            @RequestParam("telefono") String telefono,
+            @RequestParam("duracionMeses") Integer duracionMeses,
+            @RequestParam("generoMusical") String generoMusical,
+            @RequestParam("porcentajeGanancia") Double porcentajeGanancia,
+            Model model) {
+        Contrato contrato = new Contrato();
+        Usuario artista = usuarioServicio.buscarPorUsuario(artistaId);
+        if (artista == null) {
+            model.addAttribute("error", "Artista no encontrado.");
+            model.addAttribute("contrato", contrato);
+            model.addAttribute("artistas", usuarioServicio.listarArtistas());
+            return "generarContrato";
+        }
+
+        contrato.setArtista(artista);
+        contrato.setNombreReal(artista.getNombre());
+        contrato.setNombreArtistico(nombreArtistico);
+        contrato.setTelefono(telefono);
+        contrato.setDuracionMeses(duracionMeses);
+        contrato.setGeneroMusical(generoMusical);
+        contrato.setPorcentajeGanancia(porcentajeGanancia);
+
         contratoService.guardarContrato(contrato);
         model.addAttribute("mensaje", "¡Contrato generado exitosamente! La solicitud será revisada por el administrador.");
         return "confirmacionContrato";
@@ -78,6 +101,7 @@ public class ContratoControlador {
                 .orElse(null);
         if (contrato != null) {
             model.addAttribute("contrato", contrato);
+            model.addAttribute("artistas", usuarioServicio.listarArtistas());
             return "editarContrato";
         }
         return "redirect:/contratos/gestionar";
@@ -127,12 +151,14 @@ public class ContratoControlador {
         return "redirect:/contratos/admin/contratos";
     }
 
+    // Rechazar contrato
     @PostMapping("/admin/rechazar")
     public String rechazarContrato(@RequestParam Long id, @RequestParam String motivo) {
         contratoService.rechazarContrato(id, motivo);
         return "redirect:/contratos/admin/contratos";
     }
 
+    // Descargar contrato en PDF
     @GetMapping("/pdf/{id}")
     public ResponseEntity<byte[]> descargarContratoPdf(@PathVariable Long id) {
         Contrato contrato = contratoService.listarContratos().stream()
@@ -146,7 +172,6 @@ public class ContratoControlador {
 
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
             PdfWriter writer = new PdfWriter(baos);
             PdfDocument pdf = new PdfDocument(writer);
             Document document = new Document(pdf);
@@ -218,5 +243,4 @@ public class ContratoControlador {
             return ResponseEntity.status(500).build();
         }
     }
-
 }

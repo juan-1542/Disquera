@@ -18,12 +18,14 @@
     ⬅ Volver
 </a>
 
-
 <div class="form-container">
     <h2>Generar Contrato</h2>
     <form th:action="@{/contratos/guardar}" method="post">
-        <label for="nombreReal">Nombre real:</label>
-        <input type="text" id="nombreReal" name="nombreReal" required>
+        <label for="artistaId">Artista:</label>
+        <select id="artistaId" name="artistaId" required>
+            <option value="">Selecciona un artista</option>
+            <option th:each="artista : ${artistas}" th:value="${artista.usuario}" th:text="${artista.nombre}"></option>
+        </select>
 
         <label for="nombreArtistico">Nombre artístico:</label>
         <input type="text" id="nombreArtistico" name="nombreArtistico" required>
@@ -52,4 +54,3 @@
 </div>
 </body>
 </html>
-
