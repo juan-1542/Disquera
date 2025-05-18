@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${username} + ' - Tus Regalías'">Regalías</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4ff; padding: 40px; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px #ccc; }
+        h2 { color: #1a3c6d; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; border: 1px solid #ccc; text-align: left; }
+        th { background-color: #1a3c6d; color: white; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        .total { font-weight: bold; margin-top: 20px; font-size: 1.2em; }
+        .button { background-color: #1a3c6d; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 20px; }
+        .button:hover { background-color: #0f2a4d; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2 th:text="${username} + ' - Tus Regalías'"></h2>
+
+    <div th:if="${mensaje}" class="success" th:text="${mensaje}"></div>
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+
+    <table>
+        <tr>
+            <th>Lanzamiento</th>
+            <th>Unidades Vendidas</th>
+            <th>Formato</th>
+            <th>Regalías ($)</th>
+            <th>Fecha de Venta</th>
+        </tr>
+        <tr th:each="venta : ${ventas}">
+            <td th:text="${venta.album != null ? venta.album.nombre : venta.cancion.titulo}"></td>
+            <td th:text="${venta.unidadesVendidas}"></td>
+            <td th:text="${venta.formato}"></td>
+            <td th:text="${#numbers.formatDecimal(venta.montoRegalias, 1, 2)}"></td>
+            <td th:text="${#temporals.format(venta.fechaVenta, 'dd/MM/yyyy')}"></td>
+        </tr>
+    </table>
+
+    <div class="total">
+        Total de Regalías Pendientes: $<span th:text="${#numbers.formatDecimal(totalRegalias, 1, 2)}"></span>
+    </div>
+
+    <form th:action="@{/artista/regalias/solicitar}" method="post">
+        <button type="submit" class="button">Solicitar Pago</button>
+    </form>
+</div>
+</body>
+</html>

@@ -60,7 +60,7 @@
             color: var(--startune-dark);
         }
 
-        .form-control {
+        .form-control, .form-select {
             border-radius: 10px;
         }
 
@@ -111,7 +111,7 @@
                         <span th:text="${#dates.format(album.fechaLanzamiento, 'dd/MM/yyyy')}"></span><br>
                         <strong>Género:</strong> <span th:text="${album.genero}"></span><br>
                         <strong>Número de Canciones:</strong> <span th:text="${album.numeroCanciones}"></span><br>
-                        <strong>Formato:</strong> <span th:text="${album.formatoDistribucion}"></span><br>
+                        <strong>Formato de Distribución:</strong> <span th:text="${album.formatoDistribucion}"></span><br>
                         <strong>Porcentaje de Regalías:</strong>
                         <span th:with="contrato=${@contratoService.buscarContratoActivo(album.usuario.usuario)}"
                               th:text="${contrato != null ? contrato.porcentajeGanancia + '%' : 'Sin contrato activo'}"></span>
@@ -122,6 +122,13 @@
                         <div class="mb-3">
                             <label th:for="'unidadesVendidasAlbum_' + ${album.id}" class="form-label">Unidades Vendidas</label>
                             <input type="number" class="form-control" th:id="'unidadesVendidasAlbum_' + ${album.id}" name="unidadesVendidas" required min="1">
+                        </div>
+                        <div class="mb-3">
+                            <label th:for="'formatoAlbum_' + ${album.id}" class="form-label">Formato</label>
+                            <select class="form-select" th:id="'formatoAlbum_' + ${album.id}" name="formato" required>
+                                <option value="">Selecciona formato</option>
+                                <option th:each="formato : ${formatos}" th:value="${formato}" th:text="${formato}"></option>
+                            </select>
                         </div>
                         <button type="submit" class="btn btn-startune">Registrar Venta</button>
                     </form>
@@ -142,8 +149,9 @@
                     <h5 class="card-title" th:text="${cancion.titulo}"></h5>
                     <p class="card-text">
                         <strong>Artista:</strong> <span th:text="${cancion.usuario.nombre}"></span><br>
-                        <strong>Duración:</strong> <span th:text="${cancion.duracion} + ' segundos'"></span><br>
-                        <strong>Colaboradores:</strong> <span th:text="${cancion.colaboradores ?: 'Ninguno'}"></span><br>
+                        <strong>Fecha de Lanzamiento:</strong>
+                        <span th:text="${cancion.album != null ? #dates.format(cancion.album.fechaLanzamiento, 'dd/MM/yyyy') : 'N/A'}"></span><br>
+                        <strong>Duración:</strong> <span th:text="${cancion.duracion != null ? cancion.duracion + ' segundos' : 'N/A'}"></span><br>
                         <strong>Álbum:</strong> <span th:text="${cancion.album != null ? cancion.album.nombre : 'Sencillo independiente'}"></span><br>
                         <strong>Porcentaje de Regalías:</strong>
                         <span th:with="contrato=${@contratoService.buscarContratoActivo(cancion.usuario.usuario)}"
@@ -155,6 +163,13 @@
                         <div class="mb-3">
                             <label th:for="'unidadesVendidasCancion_' + ${cancion.id}" class="form-label">Unidades Vendidas</label>
                             <input type="number" class="form-control" th:id="'unidadesVendidasCancion_' + ${cancion.id}" name="unidadesVendidas" required min="1">
+                        </div>
+                        <div class="mb-3">
+                            <label th:for="'formatoCancion_' + ${cancion.id}" class="form-label">Formato</label>
+                            <select class="form-select" th:id="'formatoCancion_' + ${cancion.id}" name="formato" required>
+                                <option value="">Selecciona formato</option>
+                                <option th:each="formato : ${formatos}" th:value="${formato}" th:text="${formato}"></option>
+                            </select>
                         </div>
                         <button type="submit" class="btn btn-startune">Registrar Venta</button>
                     </form>

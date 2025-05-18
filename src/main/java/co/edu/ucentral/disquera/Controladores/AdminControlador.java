@@ -2,6 +2,7 @@ package co.edu.ucentral.disquera.Controladores;
 
 import co.edu.ucentral.disquera.Persistencia.Entidades.Album;
 import co.edu.ucentral.disquera.Persistencia.Entidades.Cancion;
+import co.edu.ucentral.disquera.Persistencia.Entidades.Venta;
 import co.edu.ucentral.disquera.Servicios.AlbumServicio;
 import co.edu.ucentral.disquera.Servicios.CancionServicio;
 import co.edu.ucentral.disquera.Servicios.ContratoService;
@@ -29,10 +30,10 @@ public class AdminControlador {
     private final VentaServicio ventaServicio;
 
     public AdminControlador(AlbumServicio albumServicio, CancionServicio cancionServicio,
-                            ContratoService contratoServicio, VentaServicio ventaServicio) {
+                            ContratoService contratoService, VentaServicio ventaServicio) {
         this.albumServicio = albumServicio;
         this.cancionServicio = cancionServicio;
-        this.contratoServicio = contratoServicio;
+        this.contratoServicio = contratoService;
         this.ventaServicio = ventaServicio;
     }
 
@@ -40,7 +41,6 @@ public class AdminControlador {
     public String listarVentas(Model modelo) {
         LocalDate hoy = LocalDate.now();
 
-        // Filtrar álbumes aprobados con fecha de lanzamiento pasada
         List<Album> albumes = albumServicio.listarTodos().stream()
                 .filter(album -> album.getEstado() == Album.Estado.APROBADO)
                 .filter(album -> {
@@ -56,7 +56,6 @@ public class AdminControlador {
                 })
                 .collect(Collectors.toList());
 
-        // Filtrar sencillos aprobados
         List<Cancion> sencillos = cancionServicio.listarSencillos().stream()
                 .filter(cancion -> cancion.getEstado() == Cancion.Estado.APROBADO)
                 .filter(cancion -> {
@@ -71,7 +70,7 @@ public class AdminControlador {
                                 ? ((java.sql.Date) fecha).toLocalDate()
                                 : fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                     } else {
-                        fechaLanzamiento = hoy; // Si no hay álbum, asumimos que está disponible
+                        fechaLanzamiento = hoy;
                     }
                     return fechaLanzamiento.isBefore(hoy.plusDays(1));
                 })
@@ -79,6 +78,7 @@ public class AdminControlador {
 
         modelo.addAttribute("albumes", albumes);
         modelo.addAttribute("sencillos", sencillos);
+        modelo.addAttribute("formatos", Venta.Formato.values());
         return "admin_ventas";
     }
 
@@ -88,11 +88,12 @@ public class AdminControlador {
             @RequestParam(value = "cancionId", required = false) Long cancionId,
             @RequestParam("unidadesVendidas") Integer unidadesVendidas,
             @RequestParam("usuUsuario") String usuUsuario,
+            @RequestParam("formato") Venta.Formato formato,
             Model modelo) {
         LOGGER.info("Registrando venta: albumId=" + albumId + ", cancionId=" + cancionId +
-                ", unidades=" + unidadesVendidas + ", usuario=" + usuUsuario);
+                ", unidades=" + unidadesVendidas + ", usuario=" + usuUsuario + ", formato=" + formato);
 
-        boolean exito = ventaServicio.registrarVenta(albumId, cancionId, unidadesVendidas, usuUsuario);
+        boolean exito = ventaServicio.registrarVenta(albumId, cancionId, unidadesVendidas, usuUsuario, formato);
         if (exito) {
             return "redirect:/admin/ventas?success";
         } else {

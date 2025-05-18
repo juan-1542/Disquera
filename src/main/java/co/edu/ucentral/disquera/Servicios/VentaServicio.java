@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
 
 @Service
@@ -18,16 +19,19 @@ public class VentaServicio {
     private final AlbumServicio albumServicio;
     private final CancionServicio cancionServicio;
     private final ContratoService contratoService;
+    private final UsuarioServicio usuarioServicio;
 
     public VentaServicio(VentaRepositorio ventaRepositorio, AlbumServicio albumServicio,
-                         CancionServicio cancionServicio, ContratoService contratoService) {
+                         CancionServicio cancionServicio, ContratoService contratoService,
+                         UsuarioServicio usuarioServicio) {
         this.ventaRepositorio = ventaRepositorio;
         this.albumServicio = albumServicio;
         this.cancionServicio = cancionServicio;
         this.contratoService = contratoService;
+        this.usuarioServicio = usuarioServicio;
     }
 
-    public boolean registrarVenta(Long albumId, Long cancionId, Integer unidadesVendidas, String usuUsuario) {
+    public boolean registrarVenta(Long albumId, Long cancionId, Integer unidadesVendidas, String usuUsuario, Venta.Formato formato) {
         if (albumId != null && cancionId != null) {
             LOGGER.warning("No se puede registrar venta para álbum y canción simultáneamente");
             return false;
@@ -45,15 +49,26 @@ public class VentaServicio {
             return false;
         }
 
+        Usuario artista = usuarioServicio.buscarPorUsuario(usuUsuario);
+        if (artista == null) {
+            LOGGER.warning("Usuario no encontrado: " + usuUsuario);
+            return false;
+        }
+
         Venta venta = new Venta();
         venta.setUnidadesVendidas(unidadesVendidas);
         venta.setFechaVenta(hoy);
-        venta.setArtista(new Usuario());
-        venta.getArtista().setUsuario(usuUsuario);
+        venta.setFormato(formato);
+        venta.setArtista(artista);
+        venta.setEstadoPago("PENDIENTE");
 
+        double precioUnitario;
         if (albumId != null) {
-            Album album = albumServicio.buscarPorId(albumId)
-                    .orElseThrow(() -> new IllegalArgumentException("Álbum no encontrado: " + albumId));
+            Album album = albumServicio.buscarPorId(albumId).orElse(null);
+            if (album == null) {
+                LOGGER.warning("Álbum no encontrado: " + albumId);
+                return false;
+            }
 
             if (album.getEstado() != Album.Estado.APROBADO) {
                 LOGGER.warning("El álbum no está aprobado: " + album.getNombre());
@@ -76,10 +91,18 @@ public class VentaServicio {
             }
 
             venta.setAlbum(album);
-            venta.setPrecioUnitario(10.0); // Precio fijo para álbumes
+            precioUnitario = switch (formato) {
+                case FISICO -> 10.0;
+                case DIGITAL -> 8.0;
+                case STREAMING -> 0.01;
+            };
+            venta.setPrecioUnitario(precioUnitario);
         } else {
-            Cancion cancion = cancionServicio.buscarPorId(cancionId)
-                    .orElseThrow(() -> new IllegalArgumentException("Canción no encontrada: " + cancionId));
+            Cancion cancion = cancionServicio.buscarPorId(cancionId).orElse(null);
+            if (cancion == null) {
+                LOGGER.warning("Canción no encontrada: " + cancionId);
+                return false;
+            }
 
             if (!cancion.isEsSencillo()) {
                 LOGGER.warning("La canción no es un sencillo: " + cancion.getTitulo());
@@ -111,11 +134,68 @@ public class VentaServicio {
             }
 
             venta.setCancion(cancion);
-            venta.setPrecioUnitario(2.0); // Precio fijo para sencillos
+            precioUnitario = switch (formato) {
+                case FISICO -> 2.0;
+                case DIGITAL -> 1.0;
+                case STREAMING -> 0.005;
+            };
+            venta.setPrecioUnitario(precioUnitario);
         }
 
-        ventaRepositorio.save(venta);
-        LOGGER.info("Venta registrada exitosamente para usuario: " + usuUsuario);
+        // Calcular regalías
+        double ingresosTotales = unidadesVendidas * precioUnitario;
+        double porcentajeRegalias = contrato.getPorcentajeGanancia() / 100.0;
+        double montoRegalias;
+
+        if (cancionId != null) {
+            Cancion cancion = cancionServicio.buscarPorId(cancionId).orElse(null);
+            if (cancion != null && cancion.getColaboradores() != null && !cancion.getColaboradores().isEmpty()) {
+                // Dividir equitativamente entre el usuario principal y colaboradores
+                int totalArtistas = cancion.getColaboradores().size() + 1; // +1 por el usuario principal
+                montoRegalias = (ingresosTotales * porcentajeRegalias) / totalArtistas;
+            } else {
+                montoRegalias = ingresosTotales * porcentajeRegalias;
+            }
+        } else {
+            montoRegalias = ingresosTotales * porcentajeRegalias;
+        }
+
+        venta.setMontoRegalias(montoRegalias);
+        try {
+            ventaRepositorio.save(venta);
+            LOGGER.info("Venta registrada exitosamente para usuario: " + usuUsuario + ", monto regalías: " + montoRegalias);
+            return true;
+        } catch (Exception e) {
+            LOGGER.severe("Error al registrar venta: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public List<Venta> consultarRegaliasPorUsuario(String usuUsuario) {
+        LOGGER.info("Consultando regalías para usuario: " + usuUsuario);
+        return ventaRepositorio.findByArtista_UsuarioAndEstadoPago(usuUsuario, "PENDIENTE");
+    }
+
+    public boolean solicitarPagoRegalias(String usuUsuario) {
+        LOGGER.info("Solicitando pago de regalías para usuario: " + usuUsuario);
+        List<Venta> ventasPendientes = ventaRepositorio.findByArtista_UsuarioAndEstadoPago(usuUsuario, "PENDIENTE");
+        if (ventasPendientes.isEmpty()) {
+            LOGGER.warning("No hay regalías pendientes para el usuario: " + usuUsuario);
+            return false;
+        }
+
+        for (Venta venta : ventasPendientes) {
+            venta.setEstadoPago("SOLICITADO");
+            ventaRepositorio.save(venta);
+        }
+        LOGGER.info("Pago de regalías solicitado para usuario: " + usuUsuario);
         return true;
+    }
+
+    public double obtenerTotalRegaliasPendientes(String usuUsuario) {
+        List<Venta> ventas = consultarRegaliasPorUsuario(usuUsuario);
+        return ventas.stream()
+                .mapToDouble(Venta::getMontoRegalias)
+                .sum();
     }
 }

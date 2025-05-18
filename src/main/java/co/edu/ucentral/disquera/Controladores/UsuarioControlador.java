@@ -7,12 +7,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.Random;
+import jakarta.servlet.http.HttpSession;
+import java.util.logging.Logger;
 
 @Controller
 @RequestMapping("/")
 public class UsuarioControlador {
+
+    private static final Logger LOGGER = Logger.getLogger(UsuarioControlador.class.getName());
 
     @Autowired
     private UsuarioServicio usuarioServicio;
@@ -20,65 +22,77 @@ public class UsuarioControlador {
     @GetMapping("")
     public String mostrarInicio(Model model) {
         model.addAttribute("credenciales", new Usuario());
-        return "index"; // Asegúrate de que la vista de inicio se llama 'iniciosesion'
+        return "index";
     }
 
     @GetMapping("/registro")
     public String mostrarFormularioRegistro(Model model) {
         model.addAttribute("elusuario", new Usuario());
-        return "registro"; // Esta vista debe existir en tu proyecto
+        return "registro";
     }
 
     @PostMapping("/registro")
     public String procesarRegistro(@ModelAttribute("elusuario") Usuario usuario, Model model) {
         try {
-
             usuarioServicio.registrarUsuario(usuario);
-            return "redirect:/iniciosesion"; // Redirige correctamente a la página de inicio de sesión
+            LOGGER.info("Usuario registrado: " + usuario.getUsuario());
+            return "redirect:/iniciosesion";
         } catch (Exception e) {
+            LOGGER.severe("Error al registrar usuario: " + e.getMessage());
             model.addAttribute("error", "No se pudo registrar el usuario.");
-            return "registro"; // Si hay error, regresa a la vista de registro
+            return "registro";
         }
     }
 
     @GetMapping("/iniciosesion")
     public String mostrarPanelinicios(Model model) {
-        model.addAttribute("credenciales", new Usuario()); // Asegura que el formulario de inicio tenga un objeto Usuario vacío
-        return "iniciosesion"; // Carga el template de inicio de sesión
+        model.addAttribute("credenciales", new Usuario());
+        return "iniciosesion";
     }
 
     @PostMapping("/iniciosesion")
-    public String procesarLogin(@ModelAttribute("credenciales") Usuario usuario, Model model) {
+    public String procesarLogin(@ModelAttribute("credenciales") Usuario usuario, HttpSession session, Model model) {
+        LOGGER.info("Procesando login para usuario: " + usuario.getUsuario());
         Usuario usuarioEncontrado = usuarioServicio.autenticar(
                 usuario.getUsuario(), usuario.getContrasena());
 
         if (usuarioEncontrado != null) {
+            session.setAttribute("username", usuarioEncontrado.getUsuario());
+            LOGGER.info("Login exitoso, usuario: " + usuarioEncontrado.getUsuario());
             if (usuarioEncontrado.getRol() == Usuario.Rol.ADMIN) {
-                return "redirect:/admin"; // Redirige al panel de admin si el rol es ADMIN
+                return "redirect:/admin";
             } else if (usuarioEncontrado.getRol() == Usuario.Rol.ARTISTA) {
-                return "redirect:/artista"; // Redirige al panel de artista si el rol es ARTISTA
+                return "redirect:/artista";
             } else {
                 model.addAttribute("error", "Rol no reconocido");
-                return "iniciosesion"; // Si el rol no es reconocido, vuelve al formulario de login
+                return "iniciosesion";
             }
         } else {
+            LOGGER.warning("Login fallido para usuario: " + usuario.getUsuario());
             model.addAttribute("error", "Credenciales incorrectas");
-            return "iniciosesion"; // Si las credenciales son incorrectas, vuelve al formulario de login
+            return "iniciosesion";
         }
     }
 
     @GetMapping("/admin")
     public String mostrarPanelAdmin() {
-        return "admin"; // Carga el template para el panel de administración
+        return "admin";
     }
 
     @GetMapping("/artista")
     public String mostrarPanelArtista() {
-        return "artista"; // Carga el template para el panel del artista
-    }
-    @GetMapping("/recuperarcontraseña")
-    public String mostrarRecuperarContrasena() {
-        return "recuperarcontrasena"; // Vista para el formulario de recuperación de contraseña
+        return "artista";
     }
 
+    @GetMapping("/recuperarcontraseña")
+    public String mostrarRecuperarContrasena() {
+        return "recuperarcontrasena";
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        LOGGER.info("Cerrando sesión para usuario: " + session.getAttribute("username"));
+        session.invalidate();
+        return "redirect:/iniciosesion?logout";
+    }
 }
