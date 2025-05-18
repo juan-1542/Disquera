@@ -76,12 +76,29 @@
 </nav>
 
 <div class="container mt-5">
+    <!-- Mensajes de error o éxito -->
+    <div th:if="${error}" class="alert alert-danger" role="alert">
+        <span th:text="${error}"></span>
+    </div>
+    <div th:if="${success}" class="alert alert-success" role="alert">
+        <span th:text="${success}"></span>
+    </div>
+
     <div class="card shadow">
         <div class="card-header">
             <h5 class="mb-0">Registrar Nueva Canción</h5>
         </div>
         <div class="card-body">
             <form th:action="@{/canciones/guardar}" th:object="${cancion}" method="post">
+                <!-- Artista -->
+                <div class="mb-3">
+                    <label for="usuarioId" class="form-label">Artista</label>
+                    <select id="usuarioId" name="usuarioId" class="form-select" required>
+                        <option value="" selected>Seleccionar artista</option>
+                        <option th:each="artista : ${artistas}" th:value="${artista.usuario}" th:text="${artista.nombre}"></option>
+                    </select>
+                </div>
+
                 <!-- Título -->
                 <div class="mb-3">
                     <label for="titulo" class="form-label">Título de la Canción</label>

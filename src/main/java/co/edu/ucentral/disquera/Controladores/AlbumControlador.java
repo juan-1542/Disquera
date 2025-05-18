@@ -86,46 +86,75 @@ public class AlbumControlador {
         }
         try {
             // Asignar usuario desde usuarioId
+            LOGGER.info("Buscando usuario con ID: " + usuarioId);
             Usuario usuario = usuarioServicio.buscarPorUsuario(usuarioId);
             if (usuario == null) {
                 throw new IllegalArgumentException("Usuario no encontrado: " + usuarioId);
             }
             album.setUsuario(usuario);
-            // Establecer estado PENDIENTE
+            LOGGER.info("Usuario asignado al álbum: " + usuario.getNombre());
+
+            // Establecer estado PENDIENTE para el álbum
             album.setEstado(Album.Estado.PENDIENTE);
-            // Manejar canciones
-            if (album.getCanciones() != null) {
-                album.getCanciones().forEach(cancion -> {
-                    cancion.setEstado(Cancion.Estado.PENDIENTE);
-                    cancion.setAlbum(album);
-                });
-            } else {
+            LOGGER.info("Estado del álbum establecido: PENDIENTE");
+
+            // Inicializar lista de canciones si es null
+            if (album.getCanciones() == null) {
                 album.setCanciones(new ArrayList<>());
             }
-            // Manejar sencillos seleccionados
-            if (sencilloIds != null && !sencilloIds.isEmpty()) {
-                List<Cancion> sencillos = cancionServicio.buscarPorIds(sencilloIds);
-                LOGGER.info("Sencillos seleccionados para asociar: " + sencillos.size());
-                for (Cancion sencillo : sencillos) {
-                    sencillo.setAlbum(album);
-                    sencillo.setEstado(Cancion.Estado.PENDIENTE);
-                    album.getCanciones().add(sencillo);
+
+            // Filtrar canciones válidas y asignar álbum y usuario
+            List<Cancion> cancionesValidas = new ArrayList<>();
+            for (Cancion cancion : album.getCanciones()) {
+                if (cancion.getTitulo() != null && !cancion.getTitulo().isEmpty()) {
+                    LOGGER.info("Procesando nueva canción: " + cancion.getTitulo());
+                    cancion.setEstado(Cancion.Estado.PENDIENTE);
+                    cancion.setEsSencillo(false);
+                    cancion.setAlbum(album);
+                    cancion.setUsuario(usuario); // Asignar el mismo usuario del álbum
+                    cancionesValidas.add(cancion);
+                    LOGGER.info("Canción válida añadida: " + cancion.getTitulo());
                 }
             }
+            album.setCanciones(cancionesValidas);
+
+            // Manejar sencillos seleccionados
+            if (sencilloIds != null && !sencilloIds.isEmpty()) {
+                LOGGER.info("Asociando sencillos existentes: " + sencilloIds);
+                List<Cancion> sencillos = cancionServicio.buscarPorIds(sencilloIds);
+                for (Cancion sencillo : sencillos) {
+                    LOGGER.info("Actualizando sencillo: ID=" + sencillo.getId() + ", Título=" + sencillo.getTitulo());
+                    sencillo.setAlbum(album);
+                    sencillo.setEsSencillo(false); // Ya no es sencillo
+                    sencillo.setEstado(Cancion.Estado.PENDIENTE);
+                    sencillo.setUsuario(usuario); // Asignar el mismo usuario del álbum
+                    album.getCanciones().add(sencillo);
+                    LOGGER.info("Sencillo asociado: " + sencillo.getTitulo());
+                }
+            }
+
             // Manejar portada
             if (!portadaFile.isEmpty()) {
                 String fileName = System.currentTimeMillis() + "_" + portadaFile.getOriginalFilename();
                 Path path = Paths.get("src/main/resources/static/images/" + fileName);
                 Files.write(path, portadaFile.getBytes());
                 album.setPortada("/images/" + fileName);
+                LOGGER.info("Portada guardada: " + fileName);
             }
+
             // Actualizar número de canciones
             album.setNumeroCanciones(album.getCanciones().size());
             LOGGER.info("Guardando álbum: Nombre=" + album.getNombre() +
                     ", FechaLanzamiento=" + album.getFechaLanzamiento() +
                     ", NumeroCanciones=" + album.getNumeroCanciones() +
                     ", Usuario=" + (album.getUsuario() != null ? album.getUsuario().getNombre() : "null"));
+
+
+
+            // Guardar el álbum
             albumServicio.guardar(album);
+            LOGGER.info("Álbum guardado exitosamente: ID=" + album.getId());
+
             redirectAttributes.addFlashAttribute("success", "Álbum enviado para aprobación.");
             return "redirect:/albumes";
         } catch (IOException e) {

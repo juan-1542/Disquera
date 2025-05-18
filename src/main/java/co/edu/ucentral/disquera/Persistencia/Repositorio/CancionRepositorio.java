@@ -10,4 +10,5 @@ import java.util.List;
 public interface CancionRepositorio extends JpaRepository<Cancion, Long> {
     List<Cancion> findByEsSencilloTrue();
     List<Cancion> findByEstado(Cancion.Estado estado);
+    List<Cancion> findByUsuarioUsuario(String usuario);
 }

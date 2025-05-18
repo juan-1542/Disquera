@@ -1,50 +1,52 @@
 package co.edu.ucentral.disquera.Controladores;
 
-
-
-import co.edu.ucentral.disquera.Persistencia.Entidades.Artista;
+import co.edu.ucentral.disquera.Servicios.AlbumServicio;
 import co.edu.ucentral.disquera.Servicios.ArtistaServicio;
+import co.edu.ucentral.disquera.Servicios.CancionServicio;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.logging.Logger;
+
 @Controller
-@RequestMapping("/admin/artistas")
+@RequestMapping("/artista")
 public class ArtistaControlador {
 
-    private final ArtistaServicio servicio;
+    private static final Logger LOGGER = Logger.getLogger(ArtistaControlador.class.getName());
 
-    public ArtistaControlador(ArtistaServicio servicio) {
-        this.servicio = servicio;
+    private final ArtistaServicio artistaServicio;
+    private final AlbumServicio albumServicio;
+    private final CancionServicio cancionServicio;
+
+    public ArtistaControlador(ArtistaServicio artistaServicio, AlbumServicio albumServicio, CancionServicio cancionServicio) {
+        this.artistaServicio = artistaServicio;
+        this.albumServicio = albumServicio;
+        this.cancionServicio = cancionServicio;
     }
 
-    @GetMapping
-    public String listarArtistas(Model modelo) {
-        modelo.addAttribute("listaArtistas", servicio.listarTodos());
-        return "lista_artistas";
+    @GetMapping("/panel")
+    public String mostrarPanel(@RequestParam(value = "usuario", defaultValue = "artista1") String usuario, Model modelo) {
+        LOGGER.info("Mostrando panel para artista: " + usuario);
+        modelo.addAttribute("username", usuario);
+        return "artista";
     }
 
-    @GetMapping("/nuevo")
-    public String mostrarFormularioNuevo(Model modelo) {
-        modelo.addAttribute("artista", new Artista());
-        return "formulario_artista";
-    }
+    @GetMapping("/verlanzamientos")
+    public String verLanzamientos(@RequestParam(value = "usuario", defaultValue = "artista1") String usuario, Model modelo) {
+        LOGGER.info("Obteniendo lanzamientos para artista: " + usuario);
 
-    @PostMapping("/guardar")
-    public String guardarArtista(@ModelAttribute("artista") Artista artista) {
-        servicio.guardar(artista);
-        return "redirect:/admin/artistas";
-    }
+        // Obtener álbumes del artista
+        var albumes = albumServicio.buscarPorUsuario(usuario);
+        LOGGER.info("Álbumes encontrados: " + albumes.size());
+        modelo.addAttribute("albumes", albumes);
 
-    @GetMapping("/editar/{id}")
-    public String editarArtista(@PathVariable Long id, Model modelo) {
-        servicio.obtenerPorId(id).ifPresent(artista -> modelo.addAttribute("artista", artista));
-        return "formulario_artista";
-    }
+        // Obtener canciones del artista
+        var canciones = cancionServicio.buscarPorUsuario(usuario);
+        LOGGER.info("Canciones encontradas: " + canciones.size());
+        modelo.addAttribute("canciones", canciones);
 
-    @GetMapping("/eliminar/{id}")
-    public String eliminarArtista(@PathVariable Long id) {
-        servicio.eliminar(id);
-        return "redirect:/admin/artistas";
+        modelo.addAttribute("username", usuario);
+        return "verlanzamientos";
     }
 }

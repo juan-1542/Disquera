@@ -3,6 +3,7 @@ package co.edu.ucentral.disquera.Persistencia.Entidades;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "canciones")
 public class Cancion {
 
     public enum Estado {
@@ -13,22 +14,32 @@ public class Cancion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "can_id")
     private Long id;
 
+    @Column(name = "can_titulo")
     private String titulo;
 
+    @Column(name = "can_duracion")
     private Integer duracion;
 
+    @Column(name = "can_colaboradores")
     private String colaboradores;
 
     @ManyToOne
-    @JoinColumn(name = "album_id")
+    @JoinColumn(name = "alb_id")
     private Album album;
 
+    @Column(name = "can_es_sencillo")
     private boolean esSencillo;
 
+    @Column(name = "can_estado")
     @Enumerated(EnumType.STRING)
     private Estado estado;
+
+    @ManyToOne
+    @JoinColumn(name = "usu_usuario")
+    private Usuario usuario;
 
     // Getters y setters
     public Long getId() { return id; }
@@ -51,4 +62,7 @@ public class Cancion {
 
     public Estado getEstado() { return estado; }
     public void setEstado(Estado estado) { this.estado = estado; }
+
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
 }

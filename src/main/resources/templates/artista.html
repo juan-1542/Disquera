@@ -196,17 +196,15 @@
 
 <!-- Navbar -->
 <nav class="navbar">
-    <img src="images/startune-logo.png" alt="StarTune Logo">
+    <img src="/images/startune-logo.png" alt="StarTune Logo">
     <div class="navbar-links">
-        <a href="/artista/lanzamiento">Lanzamientos</a>
+        <a href="/artista/verlanzamientos?usuario=artista1">Lanzamientos</a>
         <a href="/contratos/gestionar">Contratos</a>
-        <a href="/artista/regalias">Regalias</a>
-        <a href="/albumes">Albumes</a>
-
+        <a href="/artista/regalias">Regalías</a>
+        <a href="/albumes">Álbumes</a>
     </div>
     <div class="navbar-right">
         <button onclick="location.href='/iniciosesion'">Cerrar Sesión</button>
-
         <span class="material-icons" onclick="toggleSidebar()">person</span>
     </div>
 </nav>
@@ -229,8 +227,6 @@
             <h2>Gestión De Contrato</h2>
             <p>Generar contrato, solicitar revisión</p>
             <button onclick="location.href='/contratos/gestionar'">Ir</button>
-
-
         </div>
         <div class="card">
             <span class="material-icons">album</span>
@@ -249,32 +245,30 @@
     <!-- Sección Pendientes -->
     <div class="seccion-pendientes">
         <div class="pendiente-card">
-            <img src="images/lanzamiento.jpg" alt="Lanzamientos" class="pendiente-img">
+            <img src="/images/lanzamiento.jpg" alt="Lanzamientos" class="pendiente-img">
             <div class="pendiente-info">
                 <h2>Ver lanzamientos</h2>
-                <p>Ver si el administrador aprobo mis lanzamientos</p>
-                <button onclick="location.href='/artista/lanzamiento'">Consulta Lanzamientos</button>
-
+                <p>Revisa tus álbumes y canciones enviados</p>
+                <button onclick="location.href='/artista/verlanzamientos?usuario=artista1'">Consulta Lanzamientos</button>
             </div>
         </div>
 
         <div class="pendiente-card">
-            <img src="images/contratos.jpg" alt="Contratos" class="pendiente-img">
+            <img src="/images/contratos.jpg" alt="Contratos" class="pendiente-img">
             <div class="pendiente-info">
                 <h2>Contratos por revisar</h2>
-                <p>Revisa Las Disputas Pendientes</p>
-                <button>Contratos Pendientes</button>
+                <p>Revisa las disputas pendientes</p>
+                <button onclick="location.href='/contratos/gestionar'">Contratos Pendientes</button>
             </div>
         </div>
     </div>
-</div>
 
-<!-- Script para Sidebar -->
-<script>
-    function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('active');
-    }
-</script>
+    <!-- Script para Sidebar -->
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+    </script>
 
 </body>
 </html>
