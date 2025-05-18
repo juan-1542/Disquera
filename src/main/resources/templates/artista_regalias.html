@@ -6,7 +6,7 @@
     <style>
         body { font-family: Arial, sans-serif; background: #f4f4ff; padding: 40px; }
         .container { max-width: 1000px; margin: auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px #ccc; }
-        h2 { color: #1a3c6d; text-align: center; }
+        h2, h3 { color: #1a3c6d; text-align: center; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { padding: 12px; border: 1px solid #ccc; text-align: left; }
         th { background-color: #1a3c6d; color: white; }
@@ -25,6 +25,7 @@
     <div th:if="${mensaje}" class="success" th:text="${mensaje}"></div>
     <div th:if="${error}" class="error" th:text="${error}"></div>
 
+    <h3>Regalías Pendientes</h3>
     <table>
         <tr>
             <th>Lanzamiento</th>
@@ -49,6 +50,29 @@
     <form th:action="@{/artista/regalias/solicitar}" method="post">
         <button type="submit" class="button">Solicitar Pago</button>
     </form>
+
+    <h3>Pagos Solicitados</h3>
+    <table>
+        <tr>
+            <th>Lanzamiento</th>
+            <th>Unidades Vendidas</th>
+            <th>Formato</th>
+            <th>Regalías ($)</th>
+            <th>Fecha de Venta</th>
+            <th>Estado</th>
+        </tr>
+        <tr th:each="pago : ${pagosSolicitados}">
+            <td th:text="${pago.album != null ? pago.album.nombre : pago.cancion.titulo}"></td>
+            <td th:text="${pago.unidadesVendidas}"></td>
+            <td th:text="${pago.formato}"></td>
+            <td th:text="${#numbers.formatDecimal(pago.montoRegalias, 1, 2)}"></td>
+            <td th:text="${#temporals.format(pago.fechaVenta, 'dd/MM/yyyy')}"></td>
+            <td th:text="${pago.estadoPago}"></td>
+        </tr>
+    </table>
+    <div th:if="${#lists.isEmpty(pagosSolicitados)}" class="text-center mt-4">
+        <p>No hay pagos solicitados o pagados.</p>
+    </div>
 </div>
 </body>
 </html>

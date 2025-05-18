@@ -101,4 +101,23 @@ public class AdminControlador {
             return listarVentas(modelo);
         }
     }
+
+    @GetMapping("/pagos")
+    public String listarPagos(Model modelo) {
+        List<Venta> ventasSolicitadas = ventaServicio.consultarVentasPorEstado("SOLICITADO");
+        modelo.addAttribute("ventas", ventasSolicitadas);
+        return "admin_pagos";
+    }
+
+    @PostMapping("/pagos/aprobar")
+    public String aprobarPago(@RequestParam("ventaId") Long ventaId, Model modelo) {
+        LOGGER.info("Procesando aprobación de pago para venta ID: " + ventaId);
+        boolean exito = ventaServicio.aprobarPago(ventaId);
+        if (exito) {
+            return "redirect:/admin/pagos?success";
+        } else {
+            modelo.addAttribute("error", "No se pudo aprobar el pago. Verifique el estado de la venta.");
+            return listarPagos(modelo);
+        }
+    }
 }

@@ -125,7 +125,7 @@ public class VentaServicio {
                         ? ((java.sql.Date) fecha).toLocalDate()
                         : fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             } else {
-                fechaLanzamiento = hoy; // Si es sencillo sin álbum, usamos hoy como fallback
+                fechaLanzamiento = hoy;
             }
 
             if (fechaLanzamiento.isAfter(hoy)) {
@@ -142,7 +142,6 @@ public class VentaServicio {
             venta.setPrecioUnitario(precioUnitario);
         }
 
-        // Calcular regalías
         double ingresosTotales = unidadesVendidas * precioUnitario;
         double porcentajeRegalias = contrato.getPorcentajeGanancia() / 100.0;
         double montoRegalias;
@@ -150,8 +149,7 @@ public class VentaServicio {
         if (cancionId != null) {
             Cancion cancion = cancionServicio.buscarPorId(cancionId).orElse(null);
             if (cancion != null && cancion.getColaboradores() != null && !cancion.getColaboradores().isEmpty()) {
-                // Dividir equitativamente entre el usuario principal y colaboradores
-                int totalArtistas = cancion.getColaboradores().size() + 1; // +1 por el usuario principal
+                int totalArtistas = cancion.getColaboradores().size() + 1;
                 montoRegalias = (ingresosTotales * porcentajeRegalias) / totalArtistas;
             } else {
                 montoRegalias = ingresosTotales * porcentajeRegalias;
@@ -197,5 +195,32 @@ public class VentaServicio {
         return ventas.stream()
                 .mapToDouble(Venta::getMontoRegalias)
                 .sum();
+    }
+
+    public List<Venta> consultarVentasPorEstado(String estadoPago) {
+        LOGGER.info("Consultando ventas con estado: " + estadoPago);
+        return ventaRepositorio.findByEstadoPago(estadoPago);
+    }
+
+    public List<Venta> consultarVentasPorUsuarioYEstados(String usuUsuario, List<String> estados) {
+        LOGGER.info("Consultando ventas para usuario: " + usuUsuario + ", estados: " + estados);
+        return ventaRepositorio.findByArtista_UsuarioAndEstadoPagoIn(usuUsuario, estados);
+    }
+
+    public boolean aprobarPago(Long ventaId) {
+        LOGGER.info("Aprobando pago para venta ID: " + ventaId);
+        Venta venta = ventaRepositorio.findById(ventaId).orElse(null);
+        if (venta == null) {
+            LOGGER.warning("Venta no encontrada: " + ventaId);
+            return false;
+        }
+        if (!"SOLICITADO".equals(venta.getEstadoPago())) {
+            LOGGER.warning("La venta no está en estado SOLICITADO: " + ventaId);
+            return false;
+        }
+        venta.setEstadoPago("PAGADO");
+        ventaRepositorio.save(venta);
+        LOGGER.info("Pago aprobado para venta ID: " + ventaId);
+        return true;
     }
 }

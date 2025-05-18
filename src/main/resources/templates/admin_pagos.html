@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Startune - Gestionar Pagos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root {
+            --startune-purple: #4B0082;
+            --startune-blue: #00B7EB;
+            --startune-gold: #FFD700;
+            --startune-dark: #1C2526;
+            --startune-light: #F5F6F5;
+        }
+
+        body {
+            background: linear-gradient(135deg, #FFFFFF 0%, var(--startune-light) 100%);
+            color: var(--startune-dark);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .navbar-brand img {
+            height: 50px;
+        }
+
+        .header-section {
+            background: linear-gradient(90deg, var(--startune-purple), var(--startune-blue));
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin-bottom: 2rem;
+        }
+
+        .header-section h1 {
+            color: #FFFFFF;
+            font-weight: 700;
+        }
+
+        .card-custom {
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            background: #FFFFFF;
+        }
+
+        .card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0,183,235,0.3);
+        }
+
+        .btn-startune {
+            background: var(--startune-blue);
+            border: none;
+            color: var(--startune-light);
+        }
+
+        .btn-startune:hover {
+            background: var(--startune-gold);
+            color: var(--startune-dark);
+        }
+
+        .form-control, .form-select {
+            border-radius: 10px;
+        }
+
+        .alert {
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--startune-purple);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-light bg-transparent">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <img src="/images/startune-logo.png" alt="Startune Logo">
+        </a>
+        <div>
+            <a class="btn btn-outline-primary" th:href="@{/admin}">Volver al Panel</a>
+            <a class="btn btn-outline-primary ms-2" th:href="@{/iniciosesion}">Cerrar Sesión</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Header -->
+<div class="container py-5">
+    <div class="header-section">
+        <h1>Gestionar Pagos</h1>
+        <p class="lead text-white">Aprobar pagos de regalías solicitados por los artistas</p>
+    </div>
+
+    <!-- Mensajes -->
+    <div th:if="${param.success}" class="alert alert-success">
+        Pago aprobado exitosamente.
+    </div>
+    <div th:if="${error}" class="alert alert-danger">
+        <span th:text="${error}"></span>
+    </div>
+
+    <!-- Pagos Solicitados -->
+    <h2 class="mb-4">Pagos Solicitados</h2>
+    <div class="row">
+        <div class="col-md-12">
+            <table>
+                <tr>
+                    <th>ID Venta</th>
+                    <th>Artista</th>
+                    <th>Lanzamiento</th>
+                    <th>Unidades Vendidas</th>
+                    <th>Formato</th>
+                    <th>Regalías ($)</th>
+                    <th>Fecha de Venta</th>
+                    <th>Acción</th>
+                </tr>
+                <tr th:each="venta : ${ventas}">
+                    <td th:text="${venta.id}"></td>
+                    <td th:text="${venta.artista.nombre}"></td>
+                    <td th:text="${venta.album != null ? venta.album.nombre : venta.cancion.titulo}"></td>
+                    <td th:text="${venta.unidadesVendidas}"></td>
+                    <td th:text="${venta.formato}"></td>
+                    <td th:text="${#numbers.formatDecimal(venta.montoRegalias, 1, 2)}"></td>
+                    <td th:text="${#temporals.format(venta.fechaVenta, 'dd/MM/yyyy')}"></td>
+                    <td>
+                        <form th:action="@{/admin/pagos/aprobar}" method="post">
+                            <input type="hidden" name="ventaId" th:value="${venta.id}">
+                            <button type="submit" class="btn btn-startune">Aprobar Pago</button>
+                        </form>
+                    </td>
+                </tr>
+            </table>
+            <div th:if="${#lists.isEmpty(ventas)}" class="text-center mt-4">
+                <p>No hay pagos solicitados pendientes.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center mt-4">
+        <p>© 2025 Startune Records. All rights reserved.</p>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

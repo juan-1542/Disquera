@@ -16,7 +16,7 @@
         }
 
         .navbar-brand img {
-            height: 40px; /* Ajusta según el tamaño que quieras para el logo */
+            height: 40px;
         }
 
         .nav-link {
@@ -122,6 +122,7 @@
                 <li class="nav-item"><a class="nav-link" th:href="@{/admin/lanzamiento}">Lanzamientos</a></li>
                 <li class="nav-item"><a class="nav-link" th:href="@{/admin/contratos}">Contratos</a></li>
                 <li class="nav-item"><a class="nav-link" th:href="@{/admin/ventas}">Regalías</a></li>
+                <li class="nav-item"><a class="nav-link" th:href="@{/admin/pagos}">Pagos</a></li>
                 <li class="nav-item ms-3">
                     <a class="btn btn-outline-primary" th:href="@{/iniciosesion}">Cerrar Sesión</a>
                 </li>
@@ -152,6 +153,12 @@
             <h5>Regalías</h5>
             <p>Agregar las regalías del artista</p>
             <a th:href="@{/admin/ventas}" class="btn btn-outline-primary">Ir</a>
+        </div>
+
+        <div class="custom-card">
+            <h5>Pagos</h5>
+            <p>Aprobar pagos de regalías solicitados</p>
+            <a th:href="@{/admin/pagos}" class="btn btn-outline-primary">Ir</a>
         </div>
     </div>
 </div>

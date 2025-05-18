@@ -80,9 +80,11 @@ public class ArtistaControlador {
 
         List<Venta> ventas = ventaServicio.consultarRegaliasPorUsuario(usuUsuario);
         double totalRegalias = ventaServicio.obtenerTotalRegaliasPendientes(usuUsuario);
+        List<Venta> pagosSolicitados = ventaServicio.consultarVentasPorUsuarioYEstados(usuUsuario, List.of("SOLICITADO", "PAGADO"));
 
         model.addAttribute("ventas", ventas);
         model.addAttribute("totalRegalias", totalRegalias);
+        model.addAttribute("pagosSolicitados", pagosSolicitados);
         model.addAttribute("username", usuUsuario);
         return "artista_regalias";
     }
