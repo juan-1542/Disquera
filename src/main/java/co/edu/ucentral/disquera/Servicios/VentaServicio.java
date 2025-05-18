@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Date;
 import java.util.logging.Logger;
 
 @Service
@@ -53,15 +54,23 @@ public class VentaServicio {
         if (albumId != null) {
             Album album = albumServicio.buscarPorId(albumId)
                     .orElseThrow(() -> new IllegalArgumentException("Álbum no encontrado: " + albumId));
-            
+
             if (album.getEstado() != Album.Estado.APROBADO) {
                 LOGGER.warning("El álbum no está aprobado: " + album.getNombre());
                 return false;
             }
 
-            LocalDate fechaLanzamiento = album.getFechaLanzamiento()
-                    .toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-            if (fechaLanzamiento.isAfter(hoy)) {
+            Date fechaLanzamiento = album.getFechaLanzamiento();
+            if (fechaLanzamiento == null) {
+                LOGGER.warning("El álbum " + album.getNombre() + " tiene fechaLanzamiento nula");
+                return false;
+            }
+
+            LocalDate fechaLanzamientoLocal = fechaLanzamiento instanceof java.sql.Date
+                    ? ((java.sql.Date) fechaLanzamiento).toLocalDate()
+                    : fechaLanzamiento.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+            if (fechaLanzamientoLocal.isAfter(hoy)) {
                 LOGGER.warning("La fecha de lanzamiento del álbum aún no ha pasado: " + album.getNombre());
                 return false;
             }
@@ -71,7 +80,7 @@ public class VentaServicio {
         } else {
             Cancion cancion = cancionServicio.buscarPorId(cancionId)
                     .orElseThrow(() -> new IllegalArgumentException("Canción no encontrada: " + cancionId));
-            
+
             if (!cancion.isEsSencillo()) {
                 LOGGER.warning("La canción no es un sencillo: " + cancion.getTitulo());
                 return false;
@@ -82,10 +91,20 @@ public class VentaServicio {
                 return false;
             }
 
-            // Asumimos que la canción tiene una fecha de lanzamiento asociada al álbum o es la misma
-            LocalDate fechaLanzamiento = cancion.getAlbum() != null
-                    ? cancion.getAlbum().getFechaLanzamiento().toInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-                    : hoy; // Si es sencillo sin álbum, usamos hoy como fallback
+            LocalDate fechaLanzamiento;
+            if (cancion.getAlbum() != null) {
+                Date fecha = cancion.getAlbum().getFechaLanzamiento();
+                if (fecha == null) {
+                    LOGGER.warning("Canción " + cancion.getTitulo() + " tiene álbum con fechaLanzamiento nula");
+                    return false;
+                }
+                fechaLanzamiento = fecha instanceof java.sql.Date
+                        ? ((java.sql.Date) fecha).toLocalDate()
+                        : fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            } else {
+                fechaLanzamiento = hoy; // Si es sencillo sin álbum, usamos hoy como fallback
+            }
+
             if (fechaLanzamiento.isAfter(hoy)) {
                 LOGGER.warning("La fecha de lanzamiento de la canción aún no ha pasado: " + cancion.getTitulo());
                 return false;
