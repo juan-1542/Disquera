@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -78,6 +78,17 @@
             color: #333;
             font-size: 14px;
             margin-bottom: 10px;
+        }
+        .sidebar .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            font-size: 24px;
+            color: #1a3c6d;
+        }
+        .sidebar .close-btn:hover {
+            color: #0f2a4d;
         }
         /* Contenedor Principal */
         .container {
@@ -198,22 +209,23 @@
 <nav class="navbar">
     <img src="/images/startune-logo.png" alt="StarTune Logo">
     <div class="navbar-links">
-        <a href="/artista/verlanzamientos?usuario=artista1">Lanzamientos</a>
-        <a href="/contratos/gestionar">Contratos</a>
-        <a href="/artista/regalias">Regalías</a>
-        <a href="/albumes">Álbumes</a>
+        <a th:href="@{/artista/verlanzamientos(usuario=${usuario?.usuario})}">Lanzamientos</a>
+        <a th:href="@{/contratos/gestionar}">Contratos</a>
+        <a th:href="@{/artista/regalias}">Regalías</a>
+        <a th:href="@{/albumes}">Álbumes</a>
     </div>
     <div class="navbar-right">
-        <button onclick="location.href='/iniciosesion'">Cerrar Sesión</button>
+        <button th:onclick="|location.href='@{/iniciosesion}'|">Cerrar Sesión</button>
         <span class="material-icons" onclick="toggleSidebar()">person</span>
     </div>
 </nav>
 
 <!-- Sidebar -->
-<div class="sidebar" id="sidebar">
+<div class="sidebar" id="sidebar" th:if="${usuario != null}">
+    <span class="material-icons close-btn" onclick="toggleSidebar()">close</span>
     <h3>Datos del Artista</h3>
-    <p><strong>Nombre:</strong> Juan Pérez</p>
-    <p><strong>Correo:</strong> juanperez@email.com</p>
+    <p><strong>Nombre:</strong> <span th:text="${usuario?.nombre} ?: 'No disponible'"></span></p>
+    <p><strong>Correo:</strong> <span th:text="${usuario?.correo} ?: 'No disponible'"></span></p>
     <p><strong>Rol:</strong> Artista</p>
 </div>
 
@@ -226,19 +238,19 @@
             <span class="material-icons">description</span>
             <h2>Gestión De Contrato</h2>
             <p>Generar contrato, solicitar revisión</p>
-            <button onclick="location.href='/contratos/gestionar'">Ir</button>
+            <button th:onclick="|location.href='@{/contratos/gestionar}'|">Ir</button>
         </div>
         <div class="card">
             <span class="material-icons">album</span>
             <h2>Gestión de Álbumes y canciones</h2>
             <p>Agregar canciones, álbumes y solicitar lanzamiento</p>
-            <button onclick="location.href='/albumes'">Ir</button>
+            <button th:onclick="|location.href='@{/albumes}'|">Ir</button>
         </div>
         <div class="card">
             <span class="material-icons">monetization_on</span>
             <h2>Regalías</h2>
             <p>Consulta las regalías que tiene el artista</p>
-            <button onclick="location.href='/artista/regalias'">Ir</button>
+            <button th:onclick="|location.href='@{/artista/regalias}'|">Ir</button>
         </div>
     </div>
 
@@ -249,7 +261,7 @@
             <div class="pendiente-info">
                 <h2>Ver lanzamientos</h2>
                 <p>Revisa tus álbumes y canciones enviados</p>
-                <button onclick="location.href='/artista/verlanzamientos?usuario=artista1'">Consulta Lanzamientos</button>
+                <button th:onclick="|location.href='@{/artista/verlanzamientos(usuario=${usuario?.usuario})}'|">Consulta Lanzamientos</button>
             </div>
         </div>
 
@@ -258,17 +270,18 @@
             <div class="pendiente-info">
                 <h2>Contratos por revisar</h2>
                 <p>Revisa las disputas pendientes</p>
-                <button onclick="location.href='/contratos/gestionar'">Contratos Pendientes</button>
+                <button th:onclick="|location.href='@{/contratos/gestionar}'|">Contratos Pendientes</button>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Script para Sidebar -->
-    <script>
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('active');
-        }
-    </script>
+<!-- Script para Sidebar -->
+<script>
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('active');
+    }
+</script>
 
 </body>
 </html>

@@ -77,8 +77,8 @@
 
         .custom-card {
             background: white;
-            padding: 30px;
-            width: 300px;
+            padding: 25px;
+            width: 250px;
             border-radius: 20px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             text-align: center;
@@ -154,13 +154,28 @@
             background: var(--startune-gold);
             color: var(--startune-dark);
         }
+
+        /* Media query para pantallas grandes */
+        @media (min-width: 1200px) {
+            .card-container {
+                flex-wrap: nowrap;
+            }
+        }
+
+        /* Media query para pantallas pequeñas */
+        @media (max-width: 767px) {
+            .custom-card {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
     </style>
 </head>
 <body>
 
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
+    <div class="container">
         <a class="navbar-brand" href="#">
             <img src="/images/startune-logo.png" alt="Startune Logo" />
         </a>
@@ -258,6 +273,15 @@
                 <h4>Cronograma de Lanzamientos</h4>
                 <p>Consulta el calendario de lanzamientos</p>
                 <a th:href="@{/admin/cronograma}" class="btn btn-startune">Ir a Cronograma</a>
+            </div>
+        </div>
+
+        <div class="bottom-card">
+            <img th:src="@{/images/fondo_firmados.jpg}" alt="Artistas Firmados">
+            <div>
+                <h4>Artistas Firmados</h4>
+                <p>Consulta la lista de artistas registrados</p>
+                <a th:href="@{/admin/artistas}" class="btn btn-startune">Gestionar Artistas</a>
             </div>
         </div>
     </div>
