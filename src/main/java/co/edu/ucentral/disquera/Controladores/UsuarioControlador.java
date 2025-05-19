@@ -95,4 +95,8 @@ public class UsuarioControlador {
         session.invalidate();
         return "redirect:/iniciosesion?logout";
     }
+    @GetMapping("/terminos")
+    public String mostrarPanelTerminos() {
+        return "terminos";
+    }
 }
