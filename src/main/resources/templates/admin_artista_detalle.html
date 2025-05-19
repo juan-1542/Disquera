@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Startune - Detalles del Artista</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <style>
+    :root {
+      --startune-purple: #4B0082;
+      --startune-blue: #00B7EB;
+      --startune-gold: #FFD700;
+      --startune-dark: #1C2526;
+      --startune-light: #F5F6F5;
+      --startune-corporate: #1A3C6D;
+    }
+
+    body {
+      background: linear-gradient(135deg, #FFFFFF 0%, var(--startune-light) 100%);
+      color: var(--startune-dark);
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .navbar {
+      background-color: transparent;
+      border-bottom: 2px solid var(--startune-corporate);
+    }
+
+    .navbar-brand img {
+      height: 50px;
+    }
+
+    .btn-outline-primary {
+      border: 1px solid var(--startune-corporate);
+      color: var(--startune-corporate);
+      border-radius: 25px;
+      padding: 8px 20px;
+    }
+
+    .btn-outline-primary:hover {
+      background-color: var(--startune-corporate);
+      color: var(--startune-light);
+    }
+
+    .header-section {
+      background: linear-gradient(90deg, var(--startune-purple), var(--startune-corporate));
+      padding: 2rem;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      margin-bottom: 2rem;
+    }
+
+    .header-section h1 {
+      color: #FFFFFF;
+      font-weight: 700;
+    }
+
+    .card-custom {
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      background: #FFFFFF;
+      margin-bottom: 2rem;
+    }
+
+    .card-custom h5 {
+      color: var(--startune-corporate);
+    }
+
+    .btn-startune {
+      background: var(--startune-corporate);
+      border: none;
+      color: var(--startune-light);
+      border-radius: 25px;
+      padding: 8px 20px;
+    }
+
+    .btn-startune:hover {
+      background: var(--startune-gold);
+      color: var(--startune-dark);
+    }
+
+    .badge-pendiente {
+      background-color: var(--startune-gold);
+      color: var(--startune-dark);
+    }
+
+    .badge-activo {
+      background-color: #28a745;
+      color: var(--startune-light);
+    }
+
+    .badge-rechazado, .badge-vencido {
+      background-color: #dc3545;
+      color: var(--startune-light);
+    }
+
+    .btn-back {
+      background: var(--startune-blue);
+      border: none;
+      color: var(--startune-light);
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .btn-back:hover {
+      background: var(--startune-gold);
+      color: var(--startune-dark);
+    }
+  </style>
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-light">
+  <div class="container">
+    <div class="d-flex flex-column align-items-start">
+      <a class="navbar-brand" href="#">
+        <img src="/images/startune-logo.png" alt="Startune Logo">
+      </a>
+      <a class="btn btn-back" th:href="@{/admin/artistas}">
+        <i class="fas fa-arrow-left me-2"></i>Volver a Artistas
+      </a>
+    </div>
+    <div>
+      <a class="btn btn-outline-primary" th:href="@{/iniciosesion}">Cerrar Sesión</a>
+    </div>
+  </div>
+</nav>
+
+<!-- Contenedor principal -->
+<div class="container py-5">
+  <!-- Header -->
+  <div class="header-section">
+    <h1>Detalles del Artista: <span th:text="${artista.nombre}"></span></h1>
+  </div>
+
+  <!-- Datos de contacto -->
+  <div class="card-custom">
+    <div class="card-body">
+      <h5>Datos de Contacto</h5>
+      <p><strong>Nombre:</strong> <span th:text="${artista.nombre}"></span></p>
+      <p><strong>Cédula:</strong> <span th:text="${artista.cedula}"></span></p>
+      <p><strong>Teléfono:</strong> <span th:text="${artista.telefono}"></span></p>
+      <p><strong>Correo:</strong> <span th:text="${artista.correo}"></span></p>
+    </div>
+  </div>
+
+  <!-- Contrato -->
+  <div class="card-custom">
+    <div class="card-body">
+      <h5>Contrato</h5>
+      <div th:if="${contrato != null}">
+        <p><strong>Estado:</strong>
+          <span th:classappend="'badge badge-' + ${contrato.calcularEstado().toLowerCase()}"
+                th:text="${contrato.calcularEstado()}"></span></p>
+        <p><strong>Género Musical:</strong> <span th:text="${contrato.generoMusical}"></span></p>
+        <p><strong>Porcentaje de Ganancia:</strong> <span th:text="${contrato.porcentajeGanancia + '%'}"></span></p>
+        <p><strong>Duración (meses):</strong> <span th:text="${contrato.duracionMeses}"></span></p>
+        <p><strong>Fecha de Inicio:</strong>
+          <span th:text="${#temporals.format(contrato.fechaInicio, 'dd/MM/yyyy')}"></span></p>
+        <p><strong>Fecha de Vencimiento:</strong>
+          <span th:text="${#temporals.format(contrato.fechaVencimiento, 'dd/MM/yyyy')}"></span></p>
+        <p th:if="${contrato.motivoRechazo != null}">
+          <strong>Motivo de Rechazo:</strong> <span th:text="${contrato.motivoRechazo}"></span></p>
+      </div>
+      <div th:unless="${contrato != null}">
+        <p class="text-muted">No hay contrato activo o reciente para este artista.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Discografía -->
+  <div class="card-custom">
+    <div class="card-body">
+      <h5>Discografía</h5>
+      <h6>Álbumes</h6>
+      <ul th:if="${not #lists.isEmpty(albumes)}" class="list-group list-group-flush">
+        <li th:each="album : ${albumes}" class="list-group-item">
+          <strong th:text="${album.nombre}"></strong> -
+          <span th:text="${album.genero}"></span> -
+          <span th:text="${album.fechaLanzamiento != null ? #dates.format(album.fechaLanzamiento, 'dd/MM/yyyy') : 'N/A'}"></span>
+        </li>
+      </ul>
+      <p th:if="${#lists.isEmpty(albumes)}" class="text-muted">No hay álbumes aprobados.</p>
+
+      <h6 class="mt-3">Sencillos</h6>
+      <ul th:if="${not #lists.isEmpty(sencillos)}" class="list-group list-group-flush">
+        <li th:each="sencillo : ${sencillos}" class="list-group-item">
+          <strong th:text="${sencillo.titulo}"></strong> -
+          <span th:text="${sencillo.album != null ? sencillo.album.genero : 'N/A'}"></span> -
+          <span th:text="${sencillo.album != null && sencillo.album.fechaLanzamiento != null ? #dates.format(sencillo.album.fechaLanzamiento, 'dd/MM/yyyy') : 'N/A'}"></span>
+        </li>
+      </ul>
+      <p th:if="${#lists.isEmpty(sencillos)}" class="text-muted">No hay sencillos aprobados.</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="text-center mt-4">
+    <p>© 2025 Startune Records. All rights reserved.</p>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

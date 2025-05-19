@@ -1,9 +1,6 @@
 package co.edu.ucentral.disquera.Controladores;
 
-import co.edu.ucentral.disquera.Persistencia.Entidades.Album;
-import co.edu.ucentral.disquera.Persistencia.Entidades.Cancion;
-import co.edu.ucentral.disquera.Persistencia.Entidades.Usuario;
-import co.edu.ucentral.disquera.Persistencia.Entidades.Venta;
+import co.edu.ucentral.disquera.Persistencia.Entidades.*;
 import co.edu.ucentral.disquera.Servicios.AlbumServicio;
 import co.edu.ucentral.disquera.Servicios.CancionServicio;
 import co.edu.ucentral.disquera.Servicios.ContratoService;
@@ -31,7 +28,9 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -289,11 +288,76 @@ public class AdminControlador {
             sencillos = cancionServicio.listarSencillos();
         }
 
+        LOGGER.info("Albumes: " + albumes.size() + ", Sencillos: " + sencillos.size());
         List<Usuario> artistas = usuarioServicio.listarArtistas();
         modelo.addAttribute("albumes", albumes);
         modelo.addAttribute("sencillos", sencillos);
         modelo.addAttribute("artistas", artistas);
         modelo.addAttribute("usuario", usuario);
         return "admin_cronograma";
+    }
+
+    @GetMapping("/artistas")
+    public String listarArtistas(
+            @RequestParam(value = "nombre", required = false) String nombre,
+            Model modelo) {
+        List<Usuario> artistas;
+        if (nombre != null && !nombre.isEmpty()) {
+            LOGGER.info("Filtrando artistas por nombre: " + nombre);
+            artistas = usuarioServicio.listarArtistas().stream()
+                    .filter(artista -> artista.getNombre().toLowerCase().contains(nombre.toLowerCase()))
+                    .collect(Collectors.toList());
+        } else {
+            LOGGER.info("Listando todos los artistas");
+            artistas = usuarioServicio.listarArtistas();
+        }
+
+        // Calcular discografía para cada artista
+        Map<String, Map<String, Integer>> discografia = new HashMap<>();
+        for (Usuario artista : artistas) {
+            List<Album> albumesAprobados = albumServicio.buscarPorUsuario(artista.getUsuario()).stream()
+                    .filter(album -> album.getEstado() == Album.Estado.APROBADO)
+                    .collect(Collectors.toList());
+            List<Cancion> sencillosAprobados = cancionServicio.buscarPorUsuario(artista.getUsuario()).stream()
+                    .filter(cancion -> cancion.isEsSencillo() && cancion.getEstado() == Cancion.Estado.APROBADO)
+                    .collect(Collectors.toList());
+
+            Map<String, Integer> conteo = new HashMap<>();
+            conteo.put("albumes", albumesAprobados.size());
+            conteo.put("sencillos", sencillosAprobados.size());
+            discografia.put(artista.getUsuario(), conteo);
+        }
+
+        modelo.addAttribute("artistas", artistas);
+        modelo.addAttribute("discografia", discografia);
+        modelo.addAttribute("nombre", nombre);
+        return "admin_artistas";
+    }
+
+    @GetMapping("/artistas/detalle")
+    public String detalleArtista(
+            @RequestParam("usuario") String usuario,
+            Model modelo) {
+        LOGGER.info("Consultando detalles del artista: " + usuario);
+        Usuario artista = usuarioServicio.buscarPorUsuario(usuario);
+        if (artista == null) {
+            LOGGER.warning("Artista no encontrado: " + usuario);
+            modelo.addAttribute("error", "Artista no encontrado.");
+            return "admin_artistas";
+        }
+
+        Contrato contrato = contratoServicio.buscarContratoActivo(usuario);
+        List<Album> albumes = albumServicio.buscarPorUsuario(usuario).stream()
+                .filter(album -> album.getEstado() == Album.Estado.APROBADO)
+                .collect(Collectors.toList());
+        List<Cancion> sencillos = cancionServicio.buscarPorUsuario(usuario).stream()
+                .filter(cancion -> cancion.isEsSencillo() && cancion.getEstado() == Cancion.Estado.APROBADO)
+                .collect(Collectors.toList());
+
+        modelo.addAttribute("artista", artista);
+        modelo.addAttribute("contrato", contrato);
+        modelo.addAttribute("albumes", albumes);
+        modelo.addAttribute("sencillos", sencillos);
+        return "admin_artista_detalle";
     }
 }
