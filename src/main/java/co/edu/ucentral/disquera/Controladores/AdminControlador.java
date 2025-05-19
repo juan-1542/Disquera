@@ -269,4 +269,31 @@ public class AdminControlador {
 
         document.close();
     }
+
+    @GetMapping("/cronograma")
+    public String listarCronograma(
+            @RequestParam(value = "usuario", required = false) String usuario,
+            Model modelo) {
+        List<Album> albumes;
+        List<Cancion> sencillos;
+
+        if (usuario != null && !usuario.isEmpty()) {
+            LOGGER.info("Filtrando lanzamientos para usuario: " + usuario);
+            albumes = albumServicio.buscarPorUsuario(usuario);
+            sencillos = cancionServicio.buscarPorUsuario(usuario).stream()
+                    .filter(cancion -> cancion.getAlbum() == null)
+                    .collect(Collectors.toList());
+        } else {
+            LOGGER.info("Listando todos los lanzamientos");
+            albumes = albumServicio.listarTodos();
+            sencillos = cancionServicio.listarSencillos();
+        }
+
+        List<Usuario> artistas = usuarioServicio.listarArtistas();
+        modelo.addAttribute("albumes", albumes);
+        modelo.addAttribute("sencillos", sencillos);
+        modelo.addAttribute("artistas", artistas);
+        modelo.addAttribute("usuario", usuario);
+        return "admin_cronograma";
+    }
 }

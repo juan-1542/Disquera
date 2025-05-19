@@ -12,6 +12,7 @@
             --startune-gold: #FFD700;
             --startune-dark: #1C2526;
             --startune-light: #F5F6F5;
+            --startune-corporate: #1A3C6D;
         }
 
         body {
@@ -20,12 +21,29 @@
             font-family: 'Poppins', sans-serif;
         }
 
+        .navbar {
+            background-color: transparent;
+            border-bottom: 2px solid var(--startune-corporate);
+        }
+
         .navbar-brand img {
             height: 50px;
         }
 
+        .btn-outline-primary {
+            border: 1px solid var(--startune-corporate);
+            color: var(--startune-corporate);
+            border-radius: 25px;
+            padding: 8px 20px;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--startune-corporate);
+            color: var(--startune-light);
+        }
+
         .header-section {
-            background: linear-gradient(90deg, var(--startune-purple), var(--startune-blue));
+            background: linear-gradient(90deg, var(--startune-purple), var(--startune-corporate));
             padding: 2rem;
             border-radius: 15px;
             text-align: center;
@@ -38,6 +56,10 @@
             font-weight: 700;
         }
 
+        .header-section p {
+            color: #FFFFFF;
+        }
+
         .card-custom {
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -46,13 +68,23 @@
 
         .card-custom:hover {
             transform: translateY(-5px);
-            box-shadow: 0 6px 15px rgba(0,183,235,0.3);
+            box-shadow: 0 6px 15px rgba(26,60,109,0.3);
+        }
+
+        .card-custom h5 {
+            color: var(--startune-corporate);
+        }
+
+        .card-custom .card-text {
+            color: #6c757d;
         }
 
         .btn-startune {
-            background: var(--startune-blue);
+            background: var(--startune-corporate);
             border: none;
             color: var(--startune-light);
+            border-radius: 25px;
+            padding: 8px 20px;
         }
 
         .btn-startune:hover {
@@ -60,11 +92,7 @@
             color: var(--startune-dark);
         }
 
-        .form-control {
-            border-radius: 10px;
-        }
-
-        .form-select {
+        .form-control, .form-select {
             border-radius: 10px;
         }
 
@@ -75,7 +103,7 @@
 </head>
 <body>
 <!-- Navbar -->
-<nav class="navbar navbar-light bg-transparent">
+<nav class="navbar navbar-light">
     <div class="container">
         <a class="navbar-brand" href="#">
             <img src="/images/startune-logo.png" alt="Startune Logo">
@@ -91,19 +119,19 @@
 <div class="container py-5">
     <div class="header-section">
         <h1>Registrar Ventas</h1>
-        <p class="lead text-white">Registra las ventas de álbumes y sencillos aprobados</p>
+        <p class="lead">Registra las ventas de álbumes y sencillos aprobados</p>
     </div>
 
     <!-- Mensajes -->
     <div th:if="${param.success}" class="alert alert-success">
-        Venta registrada exitosamente.
+        <i class="fas fa-check-circle me-2"></i>Venta registrada exitosamente.
     </div>
     <div th:if="${error}" class="alert alert-danger">
-        <span th:text="${error}"></span>
+        <i class="fas fa-exclamation-circle me-2"></i><span th:text="${error}"></span>
     </div>
 
     <!-- Álbumes -->
-    <h2 class="mb-4">Álbumes</h2>
+    <h2 class="mb-4" style="color: var(--startune-corporate);">Álbumes</h2>
     <div class="row">
         <div class="col-md-6 mb-4" th:each="album : ${albumes}">
             <div class="card card-custom">
@@ -113,7 +141,7 @@
                         <strong>Artista:</strong> <span th:text="${album.usuario.nombre}"></span><br>
                         <strong>Fecha de Lanzamiento:</strong>
                         <span th:text="${#dates.format(album.fechaLanzamiento, 'dd/MM/yyyy')}"></span><br>
-                        <strong>Género:</strong> <span th:text="${album.generoMusical}"></span><br>
+                        <strong>Género:</strong> <span th:text="${album.genero}"></span><br>
                         <strong>Número de Canciones:</strong> <span th:text="${album.canciones.size()}"></span><br>
                         <strong>Porcentaje de Regalías:</strong>
                         <span th:with="contrato=${@contratoService.buscarContratoActivo(album.usuario.usuario)}"
@@ -121,7 +149,7 @@
                     </p>
                     <form th:action="@{/admin/ventas/registrar}" method="post">
                         <input type="hidden" name="albumId" th:value="${album.id}">
-                        <input type="hidden" name="usuUsuario" th:value="${album.usuario.usuario}">
+                        <input type="hidden" name="usuario" th:value="${album.usuario.usuario}">
                         <div class="mb-3">
                             <label th:for="'unidadesVendidasAlbum_' + ${album.id}" class="form-label">Unidades Vendidas</label>
                             <input type="number" class="form-control" th:id="'unidadesVendidasAlbum_' + ${album.id}" name="unidadesVendidas" required min="1">
@@ -144,7 +172,7 @@
     </div>
 
     <!-- Sencillos -->
-    <h2 class="mb-4">Sencillos</h2>
+    <h2 class="mb-4" style="color: var(--startune-corporate);">Sencillos</h2>
     <div class="row">
         <div class="col-md-6 mb-4" th:each="cancion : ${sencillos}">
             <div class="card card-custom">
@@ -162,7 +190,7 @@
                     </p>
                     <form th:action="@{/admin/ventas/registrar}" method="post">
                         <input type="hidden" name="cancionId" th:value="${cancion.id}">
-                        <input type="hidden" name="usuUsuario" th:value="${cancion.usuario.usuario}">
+                        <input type="hidden" name="usuario" th:value="${cancion.usuario.usuario}">
                         <div class="mb-3">
                             <label th:for="'unidadesVendidasCancion_' + ${cancion.id}" class="form-label">Unidades Vendidas</label>
                             <input type="number" class="form-control" th:id="'unidadesVendidasCancion_' + ${cancion.id}" name="unidadesVendidas" required min="1">
